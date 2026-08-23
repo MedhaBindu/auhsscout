@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কাউটদের তালিকা - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .list-container {
+            padding: 16px;
+        }
+
+        /* Top Header Flex Layout (Title Left, Add Button Right) */
+        .list-header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 10px;
+        }
+
+        .page-title {
+            color: #f8fafc;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            text-align: left;
+        }
+
+        .add-member-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+            transition: 0.2s;
+        }
+
+        .add-member-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Filter Section */
+        .filter-box {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .filter-box input, .filter-box select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .filter-box select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+        /* Scout Card Row */
+        .scout-row {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .scout-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .scout-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #3b82f6;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .scout-details {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .scout-details h4 {
+            color: #f8fafc;
+            font-size: 13.5px;
+            margin: 0 0 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+        .scout-details p {
+            color: #94a3b8;
+            font-size: 11px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .scout-class-inline {
+            color: #38bdf8;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .scout-extra {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            flex-shrink: 0;
+            text-align: right;
+        }
+        .action-area {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dropdown-action {
+            position: relative;
+        }
+        .action-btn {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .action-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 28px;
+            background: #111b2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 50;
+            width: 140px;
+        }
+        .action-dropdown-content a, .action-dropdown-content button {
+            display: block;
+            width: 100%;
+            padding: 8px 10px;
+            color: #e2e8f0;
+            font-size: 11.5px;
+            text-decoration: none;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .action-dropdown-content a:hover, .action-dropdown-content button:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+        .show-menu {
+            display: block !important;
+        }
+        
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .status-text {
+            font-size: 9px;
+            font-weight: bold;
+            color: #22c55e;
+        }
+        .status-text.inactive {
+            color: #f43f5e;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 32px;
+            height: 18px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #22c55e;
+            transition: .3s;
+            border-radius: 18px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #f43f5e;
+        }
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        .unauthorized-msg {
+            color: #f43f5e;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Password Modal Styling */
+        .pwd-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .pwd-modal-box {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 20px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .pwd-modal-box h3 {
+            color: #f8fafc;
+            font-size: 16px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .pwd-input-group {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .pwd-input-group input {
+            width: 100%;
+            padding: 10px 35px 10px 10px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .pwd-toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .pwd-btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .pwd-submit-btn {
+            flex: 1;
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .pwd-cancel-btn {
+            flex: 1;
+            background: #475569;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="mainAppContainer" style="display: none;">
+        <div class="list-container">
+            
+            <!-- Header Layout: Left Title, Right Add Button -->
+            <div class="list-header-flex">
+                <h2 class="page-title">স্কাউটদের তালিকা</h2>
+                <a href="signup.html" class="add-member-btn" id="addMemberBtn">+ নতুন সদস্য যুক্ত করুন</a>
+            </div>
+            
+            <!-- Filters & Search Box -->
+            <div class="filter-box">
+                <input type="text" id="searchName" placeholder="নাম দিয়ে খুঁজুন...">
+                <input type="text" id="searchUsername" placeholder="ইউজারনেম দিয়ে খুঁজুন...">
+                
+                <!-- ৬ষ্ঠ থেকে ১০ম ক্লাসের ড্রপডাউন ফিল্টার -->
+                <select id="filterClass">
+                    <option value="">সকল ক্লাস নির্বাচন করুন</option>
+                    <option value="৬ষ্ঠ">৬ষ্ঠ ক্লাস</option>
+                    <option value="৭ম">৭ম ক্লাস</option>
+                    <option value="৮ম">৮ম ক্লাস</option>
+                    <option value="৯ম">৯ম ক্লাস</option>
+                    <option value="১০ম">১০ম ক্লাস</option>
+                </select>
+                
+                <select id="filterRole">
+                    <option value="">সকল পদবী (Role)</option>
+                    <option value="scout">স্কাউট সদস্য</option>
+                    <option value="adult leader">অ্যাডাল্ট লিডার</option>
+                </select>
+
+                <select id="filterGender">
+                    <option value="">সকল জেন্ডার</option>
+                    <option value="male">পুরুষ (Male)</option>
+                    <option value="female">মহিলা (Female)</option>
+                </select>
+            </div>
+
+            <!-- List Container -->
+            <div id="scoutListContent">
+                <!-- ডাইনামিকালি লোড হবে -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="pwd-modal-overlay">
+        <div class="pwd-modal-box">
+            <h3 id="pwdModalTitle">পাসওয়ার্ড পরিবর্তন</h3>
+            <div class="pwd-input-group">
+                <input type="password" id="newPassword" placeholder="নতুন পাসওয়ার্ড দিন">
+                <button type="button" class="pwd-toggle-icon" onclick="togglePasswordVisibility('newPassword', this)">👁️</button>
+            </div>
+            <div class="pwd-input-group">
+                <input type="password" id="confirmPassword" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন">
+                <button type="button" class="pwd-toggle-icon" onclick="togglePasswordVisibility('confirmPassword', this)">👁️</button>
+            </div>
+            <div class="pwd-btn-container">
+                <button type="button" class="pwd-cancel-btn" onclick="closePasswordModal()">বাতিল</button>
+                <button type="button" class="pwd-submit-btn" onclick="submitNewPassword()">সাবমিট করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="unauthorizedDiv" class="unauthorized-msg" style="display: none;">
+        দুঃখিত! এই পেজটি দেখার অনুমতি শুধু অ্যাডাল্ট লিডারদের রয়েছে।
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="scout-list.js"></script>
+</body>
+</html>

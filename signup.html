@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সাইন আপ - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background: #0b132b;
+            min-height: 100vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            border: 3px solid #1e293b;
+            padding: 20px;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signup-header h2 {
+            font-size: 22px;
+            color: #f8fafc;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .signup-header p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .form-container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #cbd5e1;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .input-group input.error-border, .input-group select.error-border {
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .input-group select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .username-error, .bcn-error {
+            font-size: 12px;
+            color: #f43f5e;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .profile-preview-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .preview-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .preview-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        #scoutExtraFields {
+            display: none;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            margin-bottom: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .login-redirect {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .login-redirect a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #errorMsg {
+            color: #f43f5e;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 700;
+            background: rgba(244, 63, 94, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="signup-header">
+            <h2>তথ্য পূরণ করুন</h2>
+            <p>আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</p>
+        </div>
+
+        <div class="form-container">
+            <div class="input-group">
+                <label>রোল নির্বাচন করুন <span style="color: #f43f5e;">*</span></label>
+                <select id="roleSelect">
+                    <option value="">-- রোল সিলেক্ট করুন --</option>
+                    <option value="scout">স্কাউট</option>
+                    <option value="adult_leader">অ্যাডাল্ট লিডার</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Gender <span style="color: #f43f5e;">*</span></label>
+                <select id="genderSelect">
+                    <option value="">-- জেন্ডার নির্বাচন করুন --</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>নাম (বাংলায়) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="nameBn" placeholder="আপনার বাংলা নাম...">
+            </div>
+
+            <div class="input-group">
+                <label>নাম (ইংরেজিতে) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="nameEn" class="capitalize-input" placeholder="Your English name...">
+            </div>
+
+            <div class="input-group">
+                <label>পিতার নাম (বাংলায়) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="fatherNameBn" placeholder="পিতার বাংলা নাম...">
+            </div>
+            <div class="input-group">
+                <label>পিতার নাম (ইংরেজিতে) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="fatherNameEn" class="capitalize-input" placeholder="Father's English name...">
+            </div>
+
+            <div class="input-group">
+                <label>মাতার নাম (বাংলায়) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="motherNameBn" placeholder="মাতার বাংলা নাম...">
+            </div>
+            <div class="input-group">
+                <label>মাতার নাম (ইংরেজিতে) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="motherNameEn" class="capitalize-input" placeholder="Mother's English name...">
+            </div>
+
+            <div class="input-group">
+                <label>ঠিকানা (বাংলায়) <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="address" placeholder="আপনার সম্পূর্ণ ঠিকানা...">
+            </div>
+
+            <div class="input-group">
+                <label>ইউজারনেম দিয়ে লগইন করুন <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="username" placeholder="username">
+                <span class="username-error" id="usernameError">ইউজারনেমে স্পেস দেওয়া যাবে না!</span>
+            </div>
+
+            <div class="input-group">
+                <label>মোবাইল নম্বর <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="mobile" placeholder="017xxxxxxxx">
+            </div>
+
+            <div class="input-group">
+                <label>জিমেইল (ঐচ্ছিক)</label>
+                <input type="email" id="email" placeholder="example@gmail.com">
+            </div>
+
+            <div id="scoutExtraFields">
+                <div class="input-group">
+                    <label>ক্লাস <span style="color: #f43f5e;">*</span></label>
+                    <select id="className">
+                        <option value="">-- ক্লাস নির্বাচন করুন --</option>
+                        <option value="৬ষ্ঠ">৬ষ্ঠ</option>
+                        <option value="৭ম">৭ম</option>
+                        <option value=" ৮ম">৮ম</option>
+                        <option value="৯ম">৯ম</option>
+                        <option value="১০ম">১০ম</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>রোল <span style="color: #f43f5e;">*</span></label>
+                    <input type="text" id="classRoll" placeholder="রোল নম্বর...">
+                </div>
+                <div class="input-group">
+                    <label>সেকশন অথবা গ্রুপ <span style="color: #f43f5e;">*</span></label>
+                    <select id="sectionOrGroupType" onchange="toggleSecGroupOptions()">
+                        <option value="">-- নির্বাচন করুন --</option>
+                        <option value="section">সেকশন</option>
+                        <option value="group">গ্রুপ</option>
+                    </select>
+                </div>
+                <div class="input-group" id="subOptionContainer" style="display:none;">
+                    <label id="subOptionLabel">সিলেক্ট করুন <span style="color: #f43f5e;">*</span></label>
+                    <select id="subOptionValue"></select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>জন্ম তারিখ <span style="color: #f43f5e;">*</span></label>
+                <input type="date" id="dob">
+            </div>
+
+            <div class="input-group">
+                <label>জন্ম নিবন্ধন নম্বর <span style="color: #f43f5e;">*</span></label>
+                <input type="text" id="birthCertNo" inputmode="numeric" maxlength="17" placeholder="১৭ ডিজিটের জন্ম নিবন্ধন নম্বর...">
+                <span class="bcn-error" id="bcnError">জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের হতে হবে!</span>
+            </div>
+
+            <div class="input-group">
+                <label>ব্লাড গ্রুপ (ঐচ্ছিক)</label>
+                <select id="bloodGroup">
+                    <option value="">-- নির্বাচন করুন --</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>প্রোফাইল ছবি <span style="color: #f43f5e;">*</span></label>
+                <div class="profile-preview-container">
+                    <input type="file" id="profileImage" accept="image/*" style="flex: 1;">
+                    <div class="preview-circle">
+                        <img id="previewImg" src="" alt="Preview">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>পাসওয়ার্ড দিন <span style="color: #f43f5e;">*</span></label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="শক্তিশালী পাসওয়ার্ড...">
+                    <button type="button" class="toggle-password" id="togglePasswordBtn">👁️</button>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="signupBtn">অ্যাকাউন্ট তৈরি করুন</button>
+            <div id="errorMsg"></div>
+        </div>
+
+        <div class="login-redirect">
+            ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="login.html">লগইন করুন</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('roleSelect').addEventListener('change', function() {
+            const scoutFields = document.getElementById('scoutExtraFields');
+            if(this.value === 'scout') {
+                scoutFields.style.display = 'block';
+            } else {
+                scoutFields.style.display = 'none';
+            }
+        });
+
+        // পাসওয়ার্ড শো / হাইড করার ফাংশন
+        document.getElementById('togglePasswordBtn').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.innerText = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.innerText = '👁️';
+            }
+        });
+
+        function toggleSecGroupOptions() {
+            const type = document.getElementById('sectionOrGroupType').value;
+            const subContainer = document.getElementById('subOptionContainer');
+            const subLabel = document.getElementById('subOptionLabel');
+            const subSelect = document.getElementById('subOptionValue');
+            
+            subSelect.innerHTML = "";
+
+            if(type === 'section') {
+                subContainer.style.display = 'block';
+                subLabel.innerHTML = `সেকশন সিলেক্ট করুন <span style="color: #f43f5e;">*</span>`;
+                ['ক', 'খ', 'গ'].forEach(sec => {
+                    let opt = document.createElement('option');
+                    opt.value = sec;
+                    opt.innerText = sec;
+                    subSelect.appendChild(opt);
+                });
+            } else if(type === 'group') {
+                subContainer.style.display = 'block';
+                subLabel.innerHTML = `গ্রুপ সিলেক্ট করুন <span style="color: #f43f5e;">*</span>`;
+                const groups = [
+                    {val: 'science', text: 'বিজ্ঞান (Science)'},
+                    {val: 'humanities', text: 'মানবিক (Humanities)'},
+                    {val: 'business_studies', text: 'ব্যবসায় শিক্ষা (Business Studies)'}
+                ];
+                groups.forEach(g => {
+                    let opt = document.createElement('option');
+                    opt.value = g.val;
+                    opt.innerText = g.text;
+                    subSelect.appendChild(opt);
+                });
+            } else {
+                subContainer.style.display = 'none';
+            }
+        }
+
+        const usernameInput = document.getElementById('username');
+        const usernameError = document.getElementById('usernameError');
+
+        usernameInput.addEventListener('input', function() {
+            if (this.value.includes(' ')) {
+                usernameError.style.display = 'block';
+                usernameInput.classList.add('error-border');
+            } else {
+                usernameError.style.display = 'none';
+                usernameInput.classList.remove('error-border');
+            }
+        });
+
+        // জন্ম নিবন্ধন নম্বর শুধু সংখ্যা এবং ১৭ ডিজিট কড়াকড়ি নিশ্চিত করার কোড
+        const birthCertNoInput = document.getElementById('birthCertNo');
+        const bcnError = document.getElementById('bcnError');
+
+        birthCertNoInput.addEventListener('input', function() {
+            // শুধু ডিজিট বা সংখ্যা রাখার জন্য
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 17) {
+                this.value = this.value.slice(0, 17);
+            }
+
+            if (this.value.length > 0 && this.value.length !== 17) {
+                this.classList.add('error-border');
+                bcnError.style.display = 'block';
+                if (this.value.length < 17) {
+                    bcnError.innerText = "জন্ম নিবন্ধন নম্বর কম হয়েছে (১৭ ডিজিট হতে হবে)!";
+                }
+            } else {
+                this.classList.remove('error-border');
+                bcnError.style.display = 'none';
+            }
+        });
+
+        document.querySelectorAll('.capitalize-input').forEach(input => {
+            input.addEventListener('input', function() {
+                let words = this.value.split('');
+                for (let i = 0; i < words.length; i++) {
+                    if (i === 0 || words[i - 1] === ' ') {
+                        words[i] = words[i].toUpperCase();
+                    }
+                }
+                this.value = words.join('');
+            });
+        });
+
+        document.getElementById('profileImage').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const previewImg = document.getElementById('previewImg');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewImg.style.display = 'none';
+            }
+        });
+    </script>
+    <script type="module" src="signup.js"></script>
+</body>
+</html>

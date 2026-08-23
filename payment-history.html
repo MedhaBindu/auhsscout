@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পেমেন্ট হিস্ট্রি - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .list-container {
+            padding: 16px;
+        }
+
+        .list-header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+
+        .page-title {
+            color: #f8fafc;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            text-align: left;
+        }
+
+        .back-btn {
+            background: #475569;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .back-btn:hover {
+            background: #334155;
+        }
+
+        /* Top 4 Filters in One Line */
+        .filter-row-four {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .filter-row-four select {
+            width: 100%;
+            padding: 8px 4px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 11px;
+            outline: none;
+            text-align: center;
+        }
+        .filter-row-four select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .summary-title {
+            color: #94a3b8;
+            font-size: 12px;
+            margin: 0 0 2px 0;
+        }
+        .summary-value {
+            color: #38bdf8;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* Record Card Item */
+        .record-card-item {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .record-info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .record-name {
+            font-weight: bold;
+            color: #f8fafc;
+            font-size: 13.5px;
+        }
+        .record-details-text {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+        .record-tag {
+            font-size: 10.5px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .tag-current { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .tag-advance { background: rgba(250, 204, 21, 0.15); color: #facc15; }
+        .tag-arrear { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+        .unauthorized-msg {
+            color: #f43f5e;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 0 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="mainAppContainer" style="display: none;">
+        <div class="list-container">
+            
+            <div class="list-header-flex">
+                <h2 class="page-title">পেমেন্ট হিস্ট্রি রেজিস্টার</h2>
+                <a href="weekly-subs.html" class="back-btn">← রেজিস্টারে ফিরুন</a>
+            </div>
+
+            <!-- Top 4 Filters in One Line: Date, Week, Month, Year -->
+            <div class="filter-row-four">
+                <select id="filterDate" onchange="applyHistoryFilters()">
+                    <option value="all">সকল তারিখ</option>
+                </select>
+                <select id="filterWeek" onchange="applyHistoryFilters()">
+                    <option value="all">সকল সপ্তাহ</option>
+                    <option value="1">সপ্তাহ ১</option>
+                    <option value="2">সপ্তাহ ২</option>
+                    <option value="3">সপ্তাহ ৩</option>
+                    <option value="4">সপ্তাহ ৪</option>
+                </select>
+                <select id="filterMonth" onchange="applyHistoryFilters()">
+                    <option value="all">সকল মাস</option>
+                    <option value="0">জানুয়ারি</option>
+                    <option value="1">ফেব্রুয়ারি</option>
+                    <option value="2">মার্চ</option>
+                    <option value="3">এপ্রিল</option>
+                    <option value="4">মে</option>
+                    <option value="5">জুন</option>
+                    <option value="6">জুলাই</option>
+                    <option value="7">আগস্ট</option>
+                    <option value="8">সেপ্টেম্বর</option>
+                    <option value="9">অক্টোবর</option>
+                    <option value="10">নভেম্বর</option>
+                    <option value="11">ডিসেম্বর</option>
+                </select>
+                <select id="filterYear" onchange="applyHistoryFilters()">
+                    <option value="all">সকল বছর</option>
+                </select>
+            </div>
+
+            <!-- Summary Box -->
+            <div class="summary-card">
+                <div>
+                    <p class="summary-title">মোট সংগৃহীত চাঁদা</p>
+                    <p class="summary-value" id="totalAmountText">০ টাকা</p>
+                </div>
+                <div style="text-align: right;">
+                    <p class="summary-title">মোট এন্ট্রি</p>
+                    <p class="summary-value" id="totalCountText" style="color: #22c55e;">০ টি</p>
+                </div>
+            </div>
+
+            <!-- History List Container -->
+            <div id="paymentHistoryContent">
+                <!-- ডাইনামিকালি লিস্ট রেন্ডার হবে -->
+            </div>
+        </div>
+    </div>
+
+    <div id="unauthorizedDiv" class="unauthorized-msg" style="display: none;">
+        দুঃখিত! পেমেন্ট হিস্ট্রি পেজটি দেখার অনুমতি শুধুমাত্র অ্যাডাল্ট লিডারদের রয়েছে। সাধারণ স্কাউট সদস্য হিসেবে আপনি এই পেজটি অ্যাক্সেস করতে পারবেন না।
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="payment-history.js"></script>
+</body>
+</html>

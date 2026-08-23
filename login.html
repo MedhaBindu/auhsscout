@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags for Login Page -->
+    <title>লগইন - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ | AUHS Scout Group Login</title>
+    <meta name="description" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপের অফিশিয়াল পোর্টালে লগইন করুন। আপনার ইউজারনেম, মোবাইল নম্বর বা ইমেল এবং পাসওয়ার্ড দিয়ে ড্যাশবোর্ডে প্রবেশ করুন।">
+    <meta name="keywords" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ লগইন, আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট দল লগইন, আফাজ উদ্দিন স্কাউট লগইন, আফাজ উদ্দিন স্কুলের স্কাউট লগইন, আফাজ উদ্দিনের স্কাউট দল লগইন, AUHS scout group login, AUHS scout login, AUHS login, Afaz Uddin scout login, Afaz uddin school scout group login, Afaz Uddin High School Scout Group login, Afaz Uddin school scout login">
+    <meta name="author" content="Md. Ashikur Rahman">
+
+    <!-- Open Graph / Social Sharing Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="লগইন - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ">
+    <meta property="og:description" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপের অফিশিয়াল লগইন পেজ।">
+    <meta property="og:locale" content="bn_BD">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 410px; background: #0b132b; min-height: 100vh; display: flex; flex-direction: column; padding: 20px; justify-content: space-between; }
+        .login-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 25px; }
+        .logo-box { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.2); }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .header-title { font-size: 14px; font-weight: 700; color: #f8fafc; text-align: center; line-height: 1.4; flex-grow: 1; padding: 0 10px; }
+        .login-form-container { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); padding: 25px 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; font-size: 13px; color: #cbd5e1; font-weight: 600; margin-bottom: 8px; }
+        .input-group input { width: 100%; padding: 12px 15px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #f8fafc; font-size: 14px; outline: none; }
+        .login-btn { width: 100%; padding: 14px; background: #2563eb; color: #ffffff; font-size: 15px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; margin-top: 5px; }
+        #errorMsg { color: #f43f5e; font-size: 13px; text-align: center; margin-top: 15px; font-weight: 600; }
+        #passHelpMsg { color: #f43f5e; font-size: 12px; text-align: center; margin-top: 10px; display: none; font-weight: bold; }
+        .signup-section { text-align: center; margin-top: 30px; padding: 15px; }
+        .signup-text { font-size: 13px; color: #22c55e; font-weight: 600; margin-bottom: 10px; }
+        .signup-link-btn { display: inline-block; padding: 10px 20px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; }
+        #togglePass { position: absolute; right: 10px; top: 35px; background: none; border: none; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="login-header">
+            <div class="logo-box"><img src="scout-logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/45'"></div>
+            <div class="header-title">আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</div>
+            <div class="logo-box"><img src="school-logo.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/45'"></div>
+        </div>
+        <div class="login-form-container">
+            <div class="input-group">
+                <label>ইউজারনেম, মোবাইল অথবা ইমেল দিন</label>
+                <input type="text" id="userInput" placeholder="আপনার তথ্য লিখুন...">
+            </div>
+            <div class="input-group">
+                <label>পাসওয়ার্ড দিন</label>
+                <input type="password" id="passInput" placeholder="পাসওয়ার্ড লিখুন...">
+                <button type="button" id="togglePass">👁️</button>
+            </div>
+            <button class="login-btn" id="loginBtn">লগইন করুন</button>
+            <div id="errorMsg"></div>
+            <div id="passHelpMsg">পাসওয়ার্ড ভুলে গেলে স্কাউট শিক্ষকের সাথে যোগাযোগ করুন।</div>
+        </div>
+        <div class="signup-section">
+            <div class="signup-text">অ্যাকাউন্ট না থাকলে তৈরি করুন</div>
+            <a href="signup.html" class="signup-link-btn">সাইন আপ করুন</a>
+        </div>
+    </div>
+    <script type="module" src="login.js"></script>
+</body>
+</html>

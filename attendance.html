@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কাউট উপস্থিতি - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .list-container {
+            padding: 16px;
+        }
+
+        .list-header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 10px;
+        }
+
+        .page-title {
+            color: #f8fafc;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Toggle Header for Schedule */
+        .toggle-schedule-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Filter Section */
+        .filter-box {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .filter-box input, .filter-box select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .filter-box select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Meeting Control Panel for Leaders */
+        .meeting-control-box {
+            display: none;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .meeting-control-box h3 {
+            color: #38bdf8;
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+        .meeting-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .meeting-input-row {
+            display: flex;
+            gap: 8px;
+        }
+        .meeting-input-row input, .meeting-input-row select {
+            flex: 1;
+            padding: 9px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .meeting-input-row select option {
+            background: #1e293b;
+            color: #fff;
+        }
+        input[type="date"] {
+            color-scheme: dark;
+        }
+        .input-label-hint {
+            font-size: 11.5px;
+            color: #38bdf8;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+        .meeting-save-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Scout Row / Card for Attendance */
+        .scout-row {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: 0.2s;
+        }
+        .scout-row:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .scout-top-info {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .scout-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            overflow: hidden;
+        }
+        .scout-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #3b82f6;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .scout-details h4 {
+            color: #f8fafc;
+            font-size: 13.5px;
+            margin: 0 0 2px 0;
+        }
+        .scout-details p {
+            color: #94a3b8;
+            font-size: 11px;
+            margin: 0;
+        }
+        .details-btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .details-btn:hover {
+            background: #2563eb;
+        }
+
+        .week-box {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .week-date {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .attendance-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #22c55e;
+        }
+
+        /* Modal for Details */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-box {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 {
+            color: #f8fafc;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .modal-filter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .modal-filter-row select {
+            flex: 1;
+            padding: 6px;
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+        .modal-stats {
+            color: #94a3b8;
+            font-size: 12.5px;
+            line-height: 1.6;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .modal-close-btn {
+            margin-top: 15px;
+            width: 100%;
+            background: #475569;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .unauthorized-msg {
+            color: #f43f5e;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="mainAppContainer" style="display: none;">
+        <div class="list-container">
+            
+            <div class="list-header-flex">
+                <h2 class="page-title">স্কাউট উপস্থিতি রেজিস্টার</h2>
+            </div>
+
+            <!-- Toggle Button for Schedule -->
+            <div id="toggleSchedulePanelBtn" class="toggle-schedule-btn" style="display: none;" onclick="toggleMeetingControlPanel()">
+                <span>➕ উপস্থিতি রেজিস্টার সিডিউল যুক্ত করুন</span>
+                <span id="toggleArrowIcon">▼</span>
+            </div>
+
+            <!-- Leader Meeting Date Manager -->
+            <div id="leaderMeetingControl" class="meeting-control-box">
+                <h3>সাপ্তাহিক মিটিংয়ের সিডিউল সেট করুন</h3>
+                <div class="meeting-input-group">
+                    <div class="meeting-input-row">
+                        <select id="meetingDaySelect">
+                            <option value="">বার নির্বাচন করুন</option>
+                            <option value="5">শুক্রবার</option>
+                            <option value="6">শনিবার</option>
+                            <option value="0">রবিবার</option>
+                            <option value="1">সোমবার</option>
+                            <option value="2">মঙ্গলবার</option>
+                            <option value="3">বুধবার</option>
+                            <option value="4">বৃহস্পতিবার</option>
+                        </select>
+                    </div>
+
+                    <div class="input-label-hint">শুরুর তারিখ (যেদিন থেকে শুরু হবে):</div>
+                    <div class="meeting-input-row">
+                        <input type="date" id="meetingStartDate">
+                    </div>
+
+                    <div class="input-label-hint">শেষ তারিখ (ঐচ্ছিক - খালি রাখলে আজীবন চলবে):</div>
+                    <div class="meeting-input-row">
+                        <input type="date" id="meetingEndDate">
+                    </div>
+
+                    <button type="button" class="meeting-save-btn" onclick="addRecurringMeetingSchedule()">সাপ্তাহিক সিডিউল সংরক্ষণ করুন</button>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filter-box" id="filterBoxContainer">
+                <input type="text" id="searchName" placeholder="নাম দিয়ে খুঁজুন...">
+                <select id="filterClass">
+                    <option value="">সকল ক্লাস নির্বাচন করুন</option>
+                    <option value="৬ষ্ঠ">৬ষ্ঠ ক্লাস</option>
+                    <option value="৭ম">৭ম ক্লাস</option>
+                    <option value="৮ম">৮ম ক্লাস</option>
+                    <option value="৯ম">৯ম ক্লাস</option>
+                    <option value="১০ম">১০ম ক্লাস</option>
+                </select>
+                <select id="filterStatus">
+                    <option value="all">উভয় (অ্যাক্টিভ + ইনঅ্যাক্টিভ)</option>
+                    <option value="active">অ্যাক্টিভ সদস্যগণ</option>
+                    <option value="inactive">ইনঅ্যাক্টিভ সদস্যগণ</option>
+                </select>
+            </div>
+
+            <!-- Scout List for Attendance -->
+            <div id="attendanceListContent">
+                <!-- ডাইনামিকালি লোড হবে -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="scoutDetailModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modalScoutName">সদস্যের নাম</h3>
+
+            <div class="modal-stats" id="modalScoutStats">
+                <!-- স্ট্যাটস এবং জাভাস্ক্রিপ্ট দিয়ে তৈরি ফিল্টার এখানে লোড হবে -->
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeDetailModal()">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <div id="unauthorizedDiv" class="unauthorized-msg" style="display: none;">
+        দুঃখিত! এই পেজটি দেখার অনুমতি শুধুমাত্র স্কাউট সদস্য ও অ্যাডাল্ট লিডারদের রয়েছে।
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="attendance.js"></script>
+</body>
+</html>

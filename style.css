@@ -1,0 +1,254 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* App Main Container with Scout Deep Theme */
+.app-container {
+    width: 100%;
+    max-width: 410px;
+    background: #0b132b; /* ডিপ রয়্যাল স্কাউট ব্লু ব্যাকগ্রাউন্ড */
+    min-height: 100vh;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+    border: 3px solid #1e293b;
+}
+
+/* Header - Modern Glassmorphism with Scout Accent */
+.app-header {
+    background: rgba(11, 19, 43, 0.9);
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.menu-btn {
+    font-size: 20px;
+    cursor: pointer;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.08);
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+/* Dropdown / Hamburger Menu Styling */
+.dropdown-menu {
+    position: absolute;
+    top: 70px;
+    left: 18px;
+    background: #111b2e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    width: 160px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.menu-item {
+    display: block;
+    padding: 12px 16px;
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.menu-item:hover {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.logout-item {
+    color: #f43f5e;
+}
+.logout-item:hover {
+    background: rgba(244, 63, 94, 0.2);
+    color: #f43f5e;
+}
+
+.school-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.profile-btn {
+    font-size: 16px;
+    background: linear-gradient(135deg, #f59e0b, #d97706); /* স্কাউট গোল্ডেন টাচ */
+    color: #fff;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Welcome Section - Rich Scout Banner Style */
+.welcome-section {
+    padding: 24px 18px 16px 18px;
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.welcome-section h2 {
+    font-size: 24px;
+    color: #f8fafc;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.welcome-section p {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    padding: 16px 18px 24px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Card Style - Dark Glassmorphic Scout Card */
+.scout-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 20px 14px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.scout-card:hover {
+    transform: translateY(-4px);
+    background: rgba(30, 41, 59, 0.9);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.card-bottom {
+    width: 100%;
+    text-align: center;
+}
+
+.count-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.5px;
+}
+
+.count-label {
+    font-size: 13px;
+    color: #cbd5e1;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Glowing Scout Accent Borders */
+.blue-border { border-left: 6px solid #3b82f6; }
+.green-border { border-left: 6px solid #22c55e; }
+.teal-border { border-left: 6px solid #14b8a6; }
+.pink-border { border-left: 6px solid #f43f5e; }
+.gold-border { border-left: 6px solid #f59e0b; }
+
+.full-width {
+    grid-column: span 2;
+    max-width: 75%;
+    margin: 0 auto;
+    border-left: 6px solid #f59e0b;
+}
+
+/* Icon Box & Glowing Gradients */
+.icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.icon-box img {
+    width: 65%;
+    height: 65%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+}
+
+/* Deep Scout-Themed Background Glows for Icons */
+.blue-bg { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(30, 58, 138, 0.4)); }
+.green-bg { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(20, 83, 45, 0.4)); }
+.teal-bg { background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(17, 94, 89, 0.4)); }
+.pink-bg { background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(136, 19, 55, 0.4)); }
+.gold-bg { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(146, 64, 14, 0.4)); }

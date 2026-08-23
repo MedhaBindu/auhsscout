@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কাউট আর্টিকেল বিবরণ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Hind Siliguri', sans-serif !important; 
+            background-color: #0b1329 !important; 
+            color: #f8fafc !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            width: 100% !important;
+            min-height: 100vh !important;
+        }
+
+        /* মূল পেজ কন্টেইনার যা সম্পূর্ণ স্ক্রিন জুড়ে থাকবে এবং কোনো বক্স বা বর্ডার থাকবে না */
+        .article-page-container { 
+            width: 100% !important;
+            max-width: 850px !important; 
+            margin: 0 auto !important; 
+            padding: 30px 20px !important; 
+        }
+
+        /* নেভিগেশন বার */
+        .top-nav { 
+            margin-bottom: 30px !important;
+            width: 100% !important;
+        }
+
+        .back-btn { 
+            background: #1e293b !important; 
+            color: #38bdf8 !important; 
+            border: 1px solid #334155 !important; 
+            padding: 8px 16px !important; 
+            border-radius: 8px !important; 
+            font-size: 14px !important; 
+            font-weight: 600 !important; 
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+
+        /* মূল শিরোনাম */
+        #detTitle { 
+            color: #f8fafc !important; 
+            font-size: 30px !important; 
+            font-weight: 700 !important; 
+            margin-top: 0 !important;
+            margin-bottom: 25px !important; 
+            line-height: 1.4 !important; 
+            border-bottom: 2px solid #1e293b !important;
+            padding-bottom: 15px !important;
+            width: 100% !important;
+        }
+
+        /* ইমেজ সেকশন */
+        .image-box { 
+            margin-bottom: 30px !important; 
+            border-radius: 8px !important; 
+            overflow: hidden !important; 
+            width: 100% !important;
+        }
+        
+        .image-box img { 
+            width: 100% !important; 
+            max-height: 450px !important; 
+            object-fit: cover !important; 
+            display: block !important; 
+        }
+
+        /* কোনো বক্স ছাড়াই শুধু সুন্দর স্পেস এবং আলাদা লেআউট */
+        .article-section-block { 
+            margin-bottom: 35px !important; 
+            width: 100% !important;
+        }
+
+        /* সাব-হেডিং বা সাব-টাইটেল */
+        .article-section-block h4 { 
+            color: #38bdf8 !important; 
+            font-size: 20px !important; 
+            font-weight: 600 !important;
+            margin: 0 0 12px 0 !important; 
+        }
+
+        /* মূল প্যারাগ্রাফ বা টেক্সট */
+        .article-section-block p { 
+            color: #cbd5e1 !important; 
+            font-size: 17px !important; 
+            line-height: 1.8 !important; 
+            margin: 0 !important; 
+            white-space: pre-wrap !important; 
+            word-break: break-word !important; 
+        }
+
+        .loading-text { 
+            text-align: center !important; 
+            color: #94a3b8 !important; 
+            font-size: 16px !important; 
+            padding: 50px !important; 
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="article-page-container">
+        <!-- নেভিগেশন -->
+        <div class="top-nav">
+            <a href="about-scout.html" id="backToListBtn" class="back-btn">⬅ পেছনের লিস্টে যান</a>
+        </div>
+        
+        <!-- আর্টিকেল বডি -->
+        <div id="articleMainViewWrapper">
+            <h1 id="detTitle">লোড হচ্ছে...</h1>
+            <div id="detImageContainer"></div>
+            <div id="detSectionsWrapper" class="loading-text">দয়া করে একটু অপেক্ষা করুন...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { firedb } from './firebase-config.js';
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        document.getElementById('backToListBtn').onclick = (e) => {
+            e.preventDefault();
+            window.location.href = 'about-scout.html';
+        };
+
+        async function loadArticle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('cat');
+            const index = urlParams.get('index');
+
+            const titleEl = document.getElementById('detTitle');
+            const wrapperEl = document.getElementById('detSectionsWrapper');
+
+            if (!category || index === null) {
+                titleEl.innerText = "আর্টিকেল পাওয়া যায়নি!";
+                wrapperEl.innerText = "";
+                return;
+            }
+
+            try {
+                const snap = await getDoc(doc(firedb, "siteData", "aboutScoutModernPage"));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const items = data[category] || [];
+                    const item = items[index];
+
+                    if (item) {
+                        titleEl.innerText = item.title;
+                        
+                        let htmlContent = "";
+                        if (item.sections && item.sections.length > 0) {
+                            htmlContent = item.sections.map(sec => `
+                                <div class="article-section-block">
+                                    ${sec.secTitle ? `<h4>${sec.secTitle}</h4>` : ''}
+                                    <p>${sec.secDesc || ''}</p>
+                                </div>
+                            `).join('');
+                        } else if (item.desc) {
+                            htmlContent = `<div class="article-section-block"><p>${item.desc}</p></div>`;
+                        } else {
+                            htmlContent = `<p style="color: #94a3b8; text-align: center; padding: 20px;">কোনো বিস্তারিত বিবরণ নেই।</p>`;
+                        }
+
+                        wrapperEl.innerHTML = htmlContent;
+                        wrapperEl.className = "";
+
+                        const imgContainer = document.getElementById('detImageContainer');
+                        if (item.fileUrl && (item.fileUrl.startsWith('http') || item.fileUrl.startsWith('data:image'))) {
+                            imgContainer.innerHTML = `<div class="image-box"><img src="${item.fileUrl}" alt="Article Image"></div>`;
+                        }
+                    } else {
+                        titleEl.innerText = "আর্টিকেলটি পাওয়া যায়নি।";
+                        wrapperEl.innerText = "";
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading article:", e);
+                titleEl.innerText = "ত্রুটি ঘটেছে!";
+                wrapperEl.innerText = "ডেটা লোড করতে সমস্যা হয়েছে।";
+            }
+        }
+
+        loadArticle();
+    </script>
+</body>
+</html>

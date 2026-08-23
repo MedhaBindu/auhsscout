@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সদস্য রিকোয়েস্ট - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background: #0b132b;
+            min-height: 100vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            border: 3px solid #1e293b;
+        }
+
+        .app-header {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #f8fafc;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .school-title {
+            font-size: 15px;
+            color: #f8fafc;
+            font-weight: 700;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f8fafc;
+            font-size: 16px;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 70px;
+            left: 15px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 220px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .menu-item {
+            padding: 12px 18px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #ffffff;
+        }
+
+        .logout-item {
+            color: #f43f5e;
+        }
+
+        .content-body {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-size: 18px;
+            color: #f8fafc;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .requests-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .request-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-info-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3b82f6;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .user-left-info h3 {
+            font-size: 15px;
+            color: #f8fafc;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .user-left-info p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 1px;
+        }
+
+        .user-right-info {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .user-right-info p {
+            font-size: 12px;
+            color: #38bdf8;
+            margin-bottom: 1px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-approve {
+            flex: 1;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            flex: 1;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+
+        .no-request {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="content-body">
+            <div class="page-title">
+                <span>নতুন সদস্য রিকোয়েস্ট</span>
+                <span id="reqCountBadge" style="font-size: 12px; background: #3b82f6; padding: 2px 8px; border-radius: 20px; color: #fff;">0</span>
+            </div>
+
+            <div id="requestsList" class="requests-container">
+                <div class="no-request">লোড হচ্ছে...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="member-requests.js"></script>
+</body>
+</html>

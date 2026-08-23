@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ | AUHS Scout Group Dashboard</title>
+    <meta name="description" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ এবং দল এর অফিসিয়াল ড্যাশবোর্ড। এখানে মোট সদস্য, অ্যাক্টিভ স্কাউট, গার্লস ইন স্কাউট এবং এডাল্ট লিডারদের তথ্য দেখতে পাবেন।">
+    <meta name="keywords" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ, আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট দল, আফাজ উদ্দিন স্কাউট, আফাজ উদ্দিন স্কুলের স্কাউট, আফাজ উদ্দিনের স্কাউট দল, AUHS scout group, AUHS scout, AUHS, Afaz Uddin scout, Afaz uddin school scout group, Afaz Uddin High School Scout Group, Afaz Uddin school scout">
+    <meta name="author" content="Md. Ashikur Rahman">
+
+    <!-- Open Graph / Social Media Sharing Tags (Facebook, Messenger etc.) -->
+    <property property="og:type" content="website">
+    <meta property="og:title" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ | AUHS Scout Group">
+    <meta property="og:description" content="আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপের অফিশিয়াল ড্যাশবোর্ড ও সদস্য পরিসংখ্যান।">
+    <meta property="og:locale" content="bn_BD">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2>স্বাগতম!</h2>
+            <p>আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপের ড্যাশবোর্ড</p>
+        </section>
+
+        <!-- Cards Grid -->
+        <main class="dashboard-grid">
+            <!-- Card 1: মোট সদস্য -->
+            <div class="scout-card blue-border">
+                <div class="card-top">
+                    <div class="icon-box blue-bg">
+                        <img src="total.jpg" alt="মোট সদস্য">
+                    </div>
+                    <span class="count-number" id="totalCount">০</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="count-label">মোট সদস্য</span>
+                </div>
+            </div>
+
+            <!-- Card 2: অ্যাক্টিভ স্কাউট সদস্য -->
+            <div class="scout-card green-border">
+                <div class="card-top">
+                    <div class="icon-box green-bg">
+                        <img src="active.jpg" alt="অ্যাক্টিভ স্কাউট সদস্য">
+                    </div>
+                    <span class="count-number" id="activeCount">০</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="count-label">অ্যাক্টিভ স্কাউট সদস্য</span>
+                </div>
+            </div>
+
+            <!-- Card 3: স্কাউট -->
+            <div class="scout-card teal-border">
+                <div class="card-top">
+                    <div class="icon-box teal-bg">
+                        <img src="scout.jpg" alt="স্কাউট">
+                    </div>
+                    <span class="count-number" id="scoutCount">০</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="count-label">স্কাউট</span>
+                </div>
+            </div>
+
+            <!-- Card 4: গার্লস ইন স্কাউট -->
+            <div class="scout-card pink-border">
+                <div class="card-top">
+                    <div class="icon-box pink-bg">
+                        <img src="girls-scout.jpg" alt="গার্লস ইন স্কাউট">
+                    </div>
+                    <span class="count-number" id="girlsScoutCount">০</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="count-label">গার্লস ইন স্কাউট</span>
+                </div>
+            </div>
+
+            <!-- Card 5: এডাল্ট লিডার -->
+            <div class="scout-card gold-border full-width">
+                <div class="card-top">
+                    <div class="icon-box gold-bg">
+                        <img src="adult-leader.jpg" alt="এডাল্ট লিডার">
+                    </div>
+                    <span class="count-number" id="leaderCount">০</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="count-label">এডাল্ট লিডার</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="script.js"></script>
+        <!-- আপনার অন্যান্য স্ক্রিপ্ট বা ফুটার কোড এখানে থাকতে পারে -->
+</body>
+</html>

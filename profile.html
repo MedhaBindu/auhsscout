@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রোফাইল</title>
+    <style>
+        body { background: #0b132b; color: #fff; font-family: sans-serif; padding: 15px; margin: 0; display: flex; justify-content: center; }
+        .container { max-width: 410px; width: 100%; position: relative; }
+        
+        /* হেডার এবং হ্যামবার্গার মেনু এক লাইনে রাখার জন্য ফ্লেক্সবক্স */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            gap: 8px;
+        }
+
+        .school-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #f8fafc;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        .menu-btn {
+            font-size: 18px;
+            cursor: pointer;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.08);
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        /* ড্রপডাউন মেনু স্টাইলিং */
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            background: #111b2e;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            width: 160px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .dropdown-menu.show { display: block; }
+        .menu-item {
+            display: block;
+            padding: 12px 16px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:hover { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .logout-item { color: #f43f5e; }
+        .logout-item:hover { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+
+        /* Header Section */
+        .header { text-align: center; margin-bottom: 20px; position: relative; }
+        .profile-img-container { position: relative; width: 90px; height: 90px; margin: 0 auto; }
+        .profile-img { width: 90px; height: 90px; border-radius: 50%; background: #1e293b; border: 2px solid #3b82f6; object-fit: cover; }
+        .camera-icon { position: absolute; bottom: 0; right: 0; background: #2563eb; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 2px solid #0b132b; display: none; }
+        .name-bn { font-size: 24px; font-weight: bold; margin-top: 10px; }
+        .name-en { font-size: 16px; color: #94a3b8; }
+        .username { color: #3b82f6; font-size: 14px; margin-top: 3px; }
+
+        /* Card Section */
+        .card { background: #111b2e; border: 1px solid #2d3748; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #f8fafc; }
+        
+        .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .info-box { background: #1e293b; padding: 10px; border-radius: 10px; }
+        .full-box { background: #1e293b; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        
+        .label { font-size: 12px; color: #94a3b8; }
+        .value { font-size: 14px; margin-top: 2px; word-break: break-all; }
+
+        /* Buttons */
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-edit { background: #2563eb; color: #fff; }
+        .btn-save { background: #16a34a; color: #fff; display: none; margin-top: 10px; }
+        
+        /* Edit Mode Styles */
+        input, select { background: #0b132b; border: 1px solid #3b82f6; color: #fff; width: 100%; padding: 6px; border-radius: 5px; margin-top: 4px; box-sizing: border-box; display: none; }
+        .edit-mode input, .edit-mode select { display: block; }
+        .edit-mode .static { display: none; }
+        .edit-mode-file { display: flex !important; }
+
+        /* জন্ম নিবন্ধন নাম্বারের ভুল বার্তা ও লাল বর্ডার স্টাইল */
+        .error-border { border-color: #f43f5e !important; }
+        .error-text { color: #f43f5e; font-size: 11px; margin-top: 4px; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- হ্যামবার্গার মেনু এবং স্কুল নাম এক লাইনে রাখার হেডার -->
+        <div class="app-header">
+            <div class="menu-btn" id="menuBtn">☰</div>
+            <h1 class="school-title">আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</h1>
+        </div>
+        
+        <div class="header">
+            <div class="profile-img-container">
+                <img src="" class="profile-img" id="userImg" alt="Profile">
+                <label for="editImage" class="camera-icon" id="cameraIcon">📷</label>
+                <input type="file" id="editImage" accept="image/*" style="display:none;">
+            </div>
+            <div class="name-bn" id="dispNameBn"></div>
+            <div class="name-en" id="dispNameEn"></div>
+            <div class="username" id="dispUsername"></div>
+        </div>
+
+        <div class="card" id="cardPersonal">
+            <div class="card-title">ব্যক্তিগত তথ্য</div>
+            <div class="grid-row">
+                <div class="info-box">
+                    <div class="label">জন্ম তারিখ</div>
+                    <div class="value" id="valDob"><span class="static"></span><input type="date" id="editDob"></div>
+                </div>
+                <div class="info-box">
+                    <div class="label">ব্লাড গ্রুপ</div>
+                    <div class="value" id="valBlood"><span class="static"></span>
+                        <select id="editBlood">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- নতুন যুক্ত করা জেন্ডার অপশন (শুধু দেখা যাবে, এডিট করা যাবে না) -->
+            <div class="full-box">
+                <div class="label">জেন্ডার (Gender)</div>
+                <div class="value" id="valGender"><span class="static"></span></div>
+            </div>
+            <div class="full-box">
+                <div class="label">জন্ম নিবন্ধন নম্বর</div>
+                <div class="value" id="valBcn">
+                    <span class="static"></span>
+                    <input type="text" id="editBcn" inputmode="numeric" placeholder="১৭ ডিজিটের জন্ম নিবন্ধন নম্বর দিন">
+                    <div class="error-text" id="bcnError">জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের হতে হবে!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="cardFamily">
+            <div class="card-title">পারিবারিক তথ্য</div>
+            <div class="grid-row">
+                <div class="info-box">
+                    <div class="label">পিতার নাম (বাংলা)</div>
+                    <div class="value" id="valFatherBn"><span class="static"></span><input type="text" id="editFatherBn"></div>
+                </div>
+                <div class="info-box">
+                    <div class="label">পিতার নাম (ইংরেজি)</div>
+                    <div class="value" id="valFatherEn"><span class="static"></span><input type="text" id="editFatherEn"></div>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="info-box">
+                    <div class="label">মাতার নাম (বাংলা)</div>
+                    <div class="value" id="valMotherBn"><span class="static"></span><input type="text" id="editMotherBn"></div>
+                </div>
+                <div class="info-box">
+                    <div class="label">মাতার নাম (ইংরেজি)</div>
+                    <div class="value" id="valMotherEn"><span class="static"></span><input type="text" id="editMotherEn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- শিক্ষার্থী তথ্য (শুধু স্কাউটদের জন্য দৃশ্যমান হবে) -->
+        <div class="card" id="studentSection" style="display:none;">
+            <div class="card-title">শিক্ষার্থী তথ্য</div>
+            <div class="grid-row">
+                <div class="info-box">
+                    <div class="label">ক্লাস</div>
+                    <div class="value" id="valClass"><span class="static"></span><input type="text" id="editClass"></div>
+                </div>
+                <div class="info-box">
+                    <div class="label">রোল</div>
+                    <div class="value" id="valRoll"><span class="static"></span><input type="text" id="editRoll"></div>
+                </div>
+            </div>
+            <div class="full-box" id="secGroupContainer">
+                <div class="label" id="secGroupTypeLabel">শাখা/গ্রুপ</div>
+                <div class="value" id="valSecGroup"><span class="static"></span><input type="text" id="editSecGroup"></div>
+            </div>
+        </div>
+
+        <div class="card" id="cardContact">
+            <div class="card-title">যোগাযোগ ও স্কাউট তথ্য</div>
+            <div class="full-box">
+                <div class="label">ঠিকানা</div>
+                <div class="value" id="valAddr"><span class="static"></span><input type="text" id="editAddr"></div>
+            </div>
+            <div class="full-box">
+                <div class="label">মোবাইল নম্বর</div>
+                <div class="value" id="valMobile"><span class="static"></span><input type="text" id="editMobile"></div>
+            </div>
+            <div class="full-box">
+                <div class="label">জিমেইল</div>
+                <div class="value" id="valEmail"><span class="static"></span><input type="email" id="editEmail"></div>
+            </div>
+            <div class="full-box">
+                <div class="label">রোল</div>
+                <div class="value" id="valRole"></div>
+            </div>
+        </div>
+
+        <button class="btn btn-edit" id="editBtn">তথ্য সম্পাদনা করুন</button>
+        <button class="btn btn-save" id="saveBtn">সেভ করুন</button>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

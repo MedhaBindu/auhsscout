@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কাউট সম্পর্কে - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #0b1329; color: #f8fafc; margin: 0; padding: 0; }
+        .app-container { max-width: 680px; margin: 0 auto; padding: 12px; }
+        .page-heading { color: #38bdf8; text-align: center; font-size: 17px; font-weight: 700; margin: 15px 0 12px 0; line-height: 1.4; }
+        
+        .modern-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .aesthetic-card { background: linear-gradient(135deg, #111c38 0%, #0b1329 100%); padding: 14px; border-radius: 14px; border: 1px solid #1e293b; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; }
+        .aesthetic-card:hover { border-color: #38bdf8; transform: translateY(-2px); background: linear-gradient(135deg, #162244 0%, #0f1a36 100%); }
+        .aesthetic-card .card-icon { font-size: 24px; margin-bottom: 6px; }
+        .aesthetic-card h3 { color: #f8fafc; font-size: 13px; font-weight: 700; line-height: 1.3; margin: 0; }
+
+        #subViewContainer { display: none; background: #111c38; padding: 16px; border-radius: 14px; border: 1px solid #1e293b; margin-bottom: 15px; }
+        .sub-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
+        .back-btn { background: #ef4444; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+
+        /* মোট সংখ্যা ও কাউন্টার স্টাইল */
+        .list-counter-badge { font-size: 11.5px; color: #facc15; background: rgba(250, 204, 21, 0.1); padding: 4px 10px; border-radius: 6px; margin-bottom: 12px; display: inline-block; border: 1px solid rgba(250, 204, 21, 0.2); font-weight: 600; }
+
+        .toggle-form-bar { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12.5px; cursor: pointer; width: 100%; margin-bottom: 15px; display: block; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+        #adminPostSection { background: #0b1329; padding: 14px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 15px; display: none; }
+        
+        input, select, textarea { width: 100%; padding: 9px 12px; margin-bottom: 8px; background: #111c38; border: 1px solid #1e293b; color: #fff; border-radius: 8px; font-size: 12px; outline: none; box-sizing: border-box; }
+        textarea { height: 75px; resize: vertical; }
+        
+        .section-box-group { background: #111c38; padding: 12px; border-radius: 10px; border: 1px solid #1e293b; margin-bottom: 10px; position: relative; }
+        .remove-sec-btn { background: #ef4444; color: #fff; border: none; padding: 3px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; float: right; margin-bottom: 5px; }
+        
+        .add-section-btn { background: #f59e0b; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: bold; cursor: pointer; margin-bottom: 12px; width: 100%; box-shadow: 0 3px 10px rgba(245,158,11,0.2); }
+        .submit-btn { background: #38bdf8; color: #0b1329; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 13px; }
+
+        .clean-article-item { background: #0f172a; border: 1px solid #1e293b; padding: 14px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
+        .clean-article-item:hover { border-color: #38bdf8; background: #131f3d; }
+        .clean-article-title { color: #f8fafc; font-size: 13.5px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .read-btn-new { background: #38bdf8; color: #0b1329; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h2 class="page-heading">স্কাউট জ্ঞানভাণ্ডার ও তথ্যাবলী</h2>
+
+        <button type="button" id="togglePostFormBtn" class="toggle-form-bar" style="display:none;">➕ নতুন বই বা আর্টিকেল যুক্ত করুন</button>
+
+        <div id="adminPostSection">
+            <h3 style="font-size: 13px; color: #facc15; margin-bottom: 8px;">নতুন প্রকাশনা ফর্ম</h3>
+            <select id="postCategorySelector">
+                <option value="nationalBooks">জাতীয় স্কাউট বই (Drive Link)</option>
+                <option value="internationalBooks">আন্তর্জাতিক স্কাউট বই (Drive Link)</option>
+                <option value="nationalArticles" selected>জাতীয় স্কাউট আর্টিকেল</option>
+                <option value="internationalArticles">আন্তর্জাতিক স্কাউট আর্টিকেল</option>
+            </select>
+            <input type="text" id="postTitle" placeholder="মূল শিরোনাম (যেমন: স্কাউটের মৌলিক বিষয়)...">
+            
+            <div id="dynamicSectionsWrapper" style="display:block;">
+                <div style="font-size: 11.5px; color: #38bdf8; margin-bottom: 6px; font-weight: bold;">একাধিক সাব-হেডিং ও ইনফো বক্সসমূহ:</div>
+                <div id="articleSectionsContainer">
+                    <div class="section-box-group">
+                        <input type="text" class="sec-title" placeholder="সাব-হেডিং (যেমন: স্কাউট প্রতিজ্ঞা)...">
+                        <textarea class="sec-desc" placeholder="এই বক্সের ভেতরের বিস্তারিত বিবরণ লিখুন..."></textarea>
+                    </div>
+                </div>
+                <button type="button" id="addMoreSectionBtn" class="add-section-btn">➕ আরেকটি সাব-হেডিং ও ইনফো বক্স যোগ করুন</button>
+            </div>
+
+            <div id="fileInputContainer" style="display:none;">
+                <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 3px;" id="fileLabelText">গুগল ড্রাইভ লিংক (Drive Link) দিন:</label>
+                <input type="text" id="postFileLink" placeholder="https://drive.google.com/...">
+            </div>
+
+            <div id="imageInputContainer">
+                <input type="text" id="postImageLink" placeholder="আর্টিকেলের ছবি বা লিংক (ঐচ্ছিক)...">
+            </div>
+
+            <button type="button" id="submitPublishBtn" class="submit-btn">সফলভাবে পাবলিশ করুন</button>
+        </div>
+
+        <!-- ওপরের ৪টি মূল অপশন কার্ড -->
+        <div class="modern-card-grid">
+            <div class="aesthetic-card" data-view="nationalBooks">
+                <div class="card-icon">📖</div>
+                <h3>জাতীয় স্কাউট বই</h3>
+            </div>
+            <div class="aesthetic-card" data-view="internationalBooks">
+                <div class="card-icon">🌍</div>
+                <h3>আন্তর্জাতিক স্কাউট বই</h3>
+            </div>
+            <div class="aesthetic-card" data-view="nationalArticles">
+                <div class="card-icon">🇧🇩</div>
+                <h3>জাতীয় স্কাউট আর্টিকেল</h3>
+            </div>
+            <div class="aesthetic-card" data-view="internationalArticles">
+                <div class="card-icon">🌐</div>
+                <h3>আন্তর্জাতিক স্কাউট আর্টিকেল</h3>
+            </div>
+        </div>
+
+        <!-- ক্লিক করলে টগল হয়ে লিস্ট ও মোট কাউন্টার এখানে দেখাবে -->
+        <div id="subViewContainer">
+            <div class="sub-header-bar">
+                <h3 id="subViewTitle" style="color: #38bdf8; font-size: 14px; margin: 0;">শিরোনাম</h3>
+                <button type="button" id="backToMenuBtn" class="back-btn">❌ বন্ধ করুন</button>
+            </div>
+            <div id="listCounterBox"></div>
+            <div id="subViewContentList"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const catSelector = document.getElementById("postCategorySelector");
+            const dynamicSectionsWrapper = document.getElementById("dynamicSectionsWrapper");
+            const fileInputContainer = document.getElementById("fileInputContainer");
+            const imageInputContainer = document.getElementById("imageInputContainer");
+            const addMoreBtn = document.getElementById("addMoreSectionBtn");
+            const container = document.getElementById("articleSectionsContainer");
+
+            function updateFormFields() {
+                const val = catSelector.value;
+                if (val.includes("Articles")) {
+                    dynamicSectionsWrapper.style.display = "block";
+                    fileInputContainer.style.display = "none";
+                    imageInputContainer.style.display = "block";
+                } else {
+                    dynamicSectionsWrapper.style.display = "none";
+                    fileInputContainer.style.display = "block";
+                    imageInputContainer.style.display = "none";
+                }
+            }
+
+            catSelector.addEventListener("change", updateFormFields);
+            updateFormFields();
+
+            addMoreBtn.addEventListener("click", () => {
+                const boxCount = container.querySelectorAll('.section-box-group').length + 1;
+                const newGroup = document.createElement("div");
+                newGroup.className = "section-box-group";
+                newGroup.innerHTML = `
+                    <button type="button" class="remove-sec-btn" onclick="this.parentElement.remove()">✕ ডিলিট</button>
+                    <input type="text" class="sec-title" placeholder="সাব-হেডিং ${boxCount} (যেমন: স্কাউট প্রতিজ্ঞা)...">
+                    <textarea class="sec-desc" placeholder="এই বক্সের ভেতরের বিস্তারিত বিবরণ লিখুন..."></textarea>
+                `;
+                container.appendChild(newGroup);
+            });
+        });
+    </script>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="about-scout.js"></script>
+</body>
+</html>
