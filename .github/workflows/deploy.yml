@@ -13,6 +13,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_TOKEN }}'
           channelId: live
-          
           projectId: auhs-scout
           
