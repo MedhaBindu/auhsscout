@@ -1,5 +1,6 @@
 import { firedb } from './firebase-config.js';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { uploadImageToCloudinary } from './cloudinary-config.js'; // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা হলো
 
 const loggedInUser = localStorage.getItem("loggedInUser"); 
 if (!loggedInUser) {
@@ -14,47 +15,6 @@ const userRef = doc(firedb, "users", profileTargetKey);
 
 let currentData = {};
 let canEdit = false;
-
-function compressImage(file, maxWidth = 300, maxHeight = 300, quality = 0.7) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
-                
-                if (width > height) {
-                    if (width > maxWidth) { 
-                        height = Math.round(height * (maxWidth / width)); 
-                        width = maxWidth; 
-                    }
-                } else {
-                    if (height > maxHeight) { 
-                        width = Math.round(width * (maxHeight / height)); 
-                        height = maxHeight; 
-                    }
-                }
-
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.onerror = error => reject(error);
-        };
-        reader.onerror = error => reject(error);
-    });
-}
 
 async function loadProfile() {
     try {
@@ -78,8 +38,17 @@ async function loadProfile() {
             currentData = snap.data();
             
             if (currentData.profileImage) {
-                document.getElementById('userImg').src = currentData.profileImage;
+                let displayImg = currentData.profileImage.replace('/upload/', '/upload/w_300,h_300,c_fill,q_auto,f_auto/');
+                let userImgEl = document.getElementById('userImg');
+                userImgEl.src = displayImg;
+                
+                userImgEl.onclick = () => {
+                    let hdImg = currentData.profileImage.replace('/upload/', '/upload/q_100/');
+                    window.open(hdImg, '_blank');
+                };
+                userImgEl.style.cursor = "pointer";
             }
+            
             document.getElementById('dispUsername').innerText = "@" + (currentData.username || profileTargetKey);
             document.getElementById('dispNameBn').innerText = currentData.nameBn || "";
             document.getElementById('dispNameEn').innerText = currentData.nameEn ? "(" + currentData.nameEn + ")" : "";
@@ -123,8 +92,28 @@ async function loadProfile() {
     }
 }
 
-// প্রোফাইল এডিটে রোল ফিল্ড, মোবাইল নাম্বার ও ইউজারনেম রেস্ট্রিকশন হ্যান্ডলিং
+// প্রোফাইল এডিটে রোল ফিল্ড, মোবাইল নাম্বার, ইউজারনেম ও ইমেজ প্রিভিউ হ্যান্ডলিং
 document.addEventListener("DOMContentLoaded", () => {
+    const editImageInput = document.getElementById('editImage');
+    if (editImageInput) {
+        editImageInput.setAttribute('accept', 'image/*');
+        
+        // ছবি সিলেক্ট করার সাথে সাথে গোল বৃত্তে লাইভ প্রিভিউ দেখানোর জন্য
+        editImageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const userImgEl = document.getElementById('userImg');
+                    if (userImgEl) {
+                        userImgEl.src = e.target.result; // প্রিভিউ সেট হবে
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
     const editRollInput = document.getElementById('editRoll');
     if (editRollInput) {
         editRollInput.setAttribute('type', 'tel');
@@ -300,12 +289,35 @@ if (saveBtn) {
                 return;
             }
 
+            const originalBtnText = saveBtn.innerText;
+            saveBtn.innerText = "আপডেট হচ্ছে...";
+            saveBtn.disabled = true;
+
             let updatedImage = currentData.profileImage;
             const imageFileInput = document.getElementById('editImage');
             const imageFile = imageFileInput && imageFileInput.files ? imageFileInput.files[0] : null;
             
             if (imageFile) {
-                updatedImage = await compressImage(imageFile, 300, 300, 0.7);
+                if (!imageFile.type.startsWith('image/')) {
+                    saveBtn.innerText = originalBtnText;
+                    saveBtn.disabled = false;
+                    return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন, কোনো ভিডিও বা অন্য ফাইল নয়!");
+                }
+                
+                try {
+                    // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা ফাংশন কল করা হলো
+                    const uploadResult = await uploadImageToCloudinary(imageFile);
+                    if (uploadResult && uploadResult.url) {
+                        updatedImage = uploadResult.url;
+                    } else {
+                        throw new Error("Cloudinary upload failed");
+                    }
+                } catch(err) {
+                    console.error("Cloudinary Upload Error:", err);
+                    saveBtn.innerText = originalBtnText;
+                    saveBtn.disabled = false;
+                    return alert("ছবি আপলোডে সমস্যা হয়েছে! আবার চেষ্টা করুন।");
+                }
             }
 
             const updatePayload = {
@@ -341,6 +353,8 @@ if (saveBtn) {
         } catch (error) {
             console.error("আপডেট করতে ত্রুটি হয়েছে: ", error);
             alert("আপডেট করা সম্ভব হয়নি!");
+            saveBtn.innerText = "Save / সংরক্ষণ করুন";
+            saveBtn.disabled = false;
         }
     };
 }

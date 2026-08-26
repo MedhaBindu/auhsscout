@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কাউট গ্যালারি - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #0b1329; color: #f8fafc; margin: 0; padding: 0; }
+        .app-container { max-width: 680px; margin: 0 auto; padding: 12px; }
+        
+        /* Top Bar Layout */
+        .top-action-bar { display: flex; justify-content: space-between; align-items: center; background: #111c38; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #1e293b; }
+        
+        /* Left Side Container (For Back to About Us or Breadcrumb) */
+        .left-action-container { display: flex; align-items: center; gap: 8px; }
+        
+        .breadcrumb-box { display: flex; align-items: center; gap: 8px; color: #38bdf8; font-size: 13.5px; font-weight: bold; cursor: pointer; }
+        
+        /* Left corner specific button style */
+        .btn-left-corner { background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
+        
+        /* Right Corner Action Button */
+        .btn-right-corner { background: #38bdf8; color: #0b1329; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(56,189,248,0.2); white-space: nowrap; }
+        
+        /* Grid Area */
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media(min-width: 500px) { .grid-container { grid-template-columns: repeat(3, 1fr); } }
+        
+        .item-card { background: #111c38; border: 1px solid #1e293b; border-radius: 12px; padding: 12px; text-align: center; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .folder-icon { font-size: 38px; margin-bottom: 6px; }
+        .item-name { color: #f8fafc; font-size: 13.5px; font-weight: bold; word-break: break-all; }
+        .item-img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; }
+        
+        /* 3-Dot Menu */
+        .dots-menu { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; z-index: 5; }
+        .dropdown { display: none; position: absolute; right: 0; top: 28px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 10; flex-direction: column; width: 110px; overflow: hidden; }
+        .dropdown button { background: none; border: none; color: #f8fafc; padding: 8px 10px; text-align: left; font-size: 11.5px; cursor: pointer; font-family: 'Hind Siliguri', sans-serif; }
+        .dropdown button:hover { background: #334155; }
+        .dropdown button.del { color: #ef4444; }
+
+        /* Multi-select checkbox for images - ফিক্স করা হয়েছে যাতে মোবাইলে সহজে ট্যাপ করা যায় */
+        .img-checkbox { position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; cursor: pointer; z-index: 5; accent-color: #38bdf8; }
+
+        /* Floating Multi-delete Action Bar */
+        .multi-delete-bar { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #38bdf8; padding: 10px 20px; border-radius: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 1000; align-items: center; gap: 15px; }
+        .btn-del-selected { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; }
+
+        /* Full Screen Viewer */
+        .viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+        .viewer img { max-width: 90%; max-height: 80%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .viewer-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .viewer-btn { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .viewer-btn:hover { background: #38bdf8; color: #0b1329; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <div class="top-action-bar">
+            <!-- Left Corner Action Area -->
+            <div id="leftActionContainer" class="left-action-container">
+                <!-- Dynamic Back/Breadcrumb will appear here -->
+            </div>
+            <!-- Right Corner Action Area -->
+            <div id="rightActionContainer">
+                <!-- Dynamic Add Button will appear here -->
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid-container" id="contentArea">
+            <!-- Items will load here -->
+        </div>
+    </div>
+
+    <!-- Multi-delete floating bar for admin -->
+    <div id="multiDeleteBar" class="multi-delete-bar">
+        <span id="selectedCountText" style="font-size: 12px; font-weight: bold;">০টি সিলেক্ট করা হয়েছে</span>
+        <button class="btn-del-selected" onclick="deleteSelectedImages()">ডিলিট করুন</button>
+        <button style="background:none; border:none; color:#cbd5e1; cursor:pointer; font-size:12px;" onclick="clearSelection()">বাতিল</button>
+    </div>
+
+    <!-- Full Screen Image Viewer -->
+    <div id="imageViewer" class="viewer">
+        <div class="viewer-controls">
+            <button class="viewer-btn" onclick="downloadImage()">ডাউনলোড</button>
+            <button class="viewer-btn" onclick="closeViewer()" style="background: #ef4444;">বন্ধ (X)</button>
+        </div>
+        <img id="viewerImg" src="" alt="Full View">
+    </div>
+
+    <!-- JavaScript File Link -->
+    <script type="module" src="gallery.js"></script>
+</body>
+</html>

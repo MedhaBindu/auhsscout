@@ -1,45 +1,37 @@
 import { firedb } from './firebase-config.js';
 import { collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-function compressImage(file, maxWidth = 300, maxHeight = 300, quality = 0.7) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
+import { uploadImageToCloudinary } from './cloudinary-config.js'; // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা হলো
 
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
-                }
+// Cloudinary Upload Function (with Overwrite trick using Username)
+async function uploadProfileToCloudinary(file, username) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    // একই ইউজারনেম দিয়ে আপলোড করলে ক্লাউডিনারি অটোমেটিক পুরোনোটি মুছে নতুনটি রিপ্লেস করবে!
+    formData.append('public_id', `profile_image_${username}`); 
 
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.onerror = error => reject(error);
-        };
-        reader.onerror = error => reject(error);
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
     });
+
+    if (!response.ok) {
+        throw new Error("ছবি আপলোড ব্যর্থ হয়েছে!");
+    }
+
+    const data = await response.json();
+    return data.secure_url;
 }
 
 // ইনপুট ফিল্ড ও হেল্পার এলিমেন্ট সেটআপ এবং অটো-অ্যাট্রিবিউট হ্যান্ডলিং
 document.addEventListener("DOMContentLoaded", () => {
+    // ছবি ছাড়া অন্য ফাইল (যেমন ভিডিও) আপলোড বন্ধ করতে ইনপুট ফিল্ডে strict accept যুক্ত করা হলো
+    const profileImageInput = document.getElementById('profileImage');
+    if (profileImageInput) {
+        profileImageInput.setAttribute('accept', 'image/*');
+    }
+
     // ১. ক্লাস রোল ফিল্ডে নিউমেরিক কিবোর্ড ও শুধুমাত্র সংখ্যা নিশ্চিত করা
     const classRollInput = document.getElementById('classRoll');
     if (classRollInput) {
@@ -262,14 +254,31 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
         return;
     }
 
+    const signupBtn = document.getElementById('signupBtn');
+    const originalBtnText = signupBtn.innerText;
+
     try {
         errorMsg.style.display = "block";
         errorMsg.innerText = "অ্যাকাউন্ট তৈরি করা হচ্ছে, অপেক্ষা করুন...";
+        signupBtn.innerText = "তৈরি হচ্ছে...";
+        signupBtn.disabled = true;
 
-        let compressedImageBase64 = "";
         const imageFile = profileImageInput.files[0];
-        if (imageFile) {
-            compressedImageBase64 = await compressImage(imageFile, 250, 250, 0.6);
+        if (!imageFile.type.startsWith('image/')) {
+            signupBtn.innerText = originalBtnText;
+            signupBtn.disabled = false;
+            return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন, কোনো ভিডিও বা অন্য ফাইল নয়!");
+        }
+
+        let cloudinaryImageUrl = "";
+        try {
+            // Cloudinary-তে ছবি আপলোড এবং সিকিউর লিংক জেনারেট করা
+            cloudinaryImageUrl = await uploadProfileToCloudinary(imageFile, username.value.trim());
+        } catch(err) {
+            signupBtn.innerText = originalBtnText;
+            signupBtn.disabled = false;
+            errorMsg.innerText = "ছবি আপলোডে সমস্যা হয়েছে! আবার চেষ্টা করুন।";
+            return;
         }
 
         let extraData = {};
@@ -299,7 +308,7 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
             dob: dob.value, 
             birthCertNo: birthCertNo.value.trim(), 
             bloodGroup: document.getElementById('bloodGroup').value, 
-            profileImage: compressedImageBase64,
+            profileImage: cloudinaryImageUrl, // Base64 এর বদলে Cloudinary-এর ডিরেক্ট লিংক সেভ হচ্ছে
             password: password.value.trim(),
             status: initialStatus,
             createdAt: new Date().toISOString(),
@@ -321,5 +330,7 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
         console.error("Signup Error: ", error);
         errorMsg.style.display = "block";
         errorMsg.innerText = "ত্রুটি: " + error.message;
+        signupBtn.innerText = originalBtnText;
+        signupBtn.disabled = false;
     }
 });

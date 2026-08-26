@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমাদের সম্পর্কে - আফাজ উদ্দিন উচ্চ বিদ্যালয় স্কাউট গ্রুপ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #0b1329; color: #f8fafc; margin: 0; padding: 0; }
+        .app-container { max-width: 680px; margin: 0 auto; padding: 12px; }
+        .page-heading { color: #38bdf8; text-align: center; font-size: 17px; font-weight: 700; margin: 15px 0 12px 0; line-height: 1.4; }
+        
+        .section-card { background: #111c38; border: 1px solid #1e293b; padding: 15px; margin-bottom: 20px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .section-title { color: #38bdf8; font-size: 15px; font-weight: bold; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-action { background: #38bdf8; color: #0b1329; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 11.5px; font-weight: bold; }
+        .btn-add { background: #f59e0b; color: #fff; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 12.5px; width: 100%; margin-bottom: 15px; display: none; box-shadow: 0 4px 12px rgba(245,158,11,0.2); }
+        
+        /* Slider Styles */
+        .slider-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        .slider-item { min-width: 100%; scroll-snap-align: start; background: #0f172a; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #1e293b; box-sizing: border-box; }
+        .slider-img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
+        .slider-text { padding: 12px; text-align: center; }
+        .slider-title { color: #facc15; font-size: 15px; font-weight: bold; margin: 0 0 5px 0; }
+        .slider-desc { color: #cbd5e1; font-size: 12.5px; margin: 0; line-height: 1.4; }
+        
+        /* Content Box - ফিক্সড ব্যাকগ্রাউন্ড ও প্যাডিং বাদ দিয়ে ফ্লেক্সিবল করা হলো যাতে লেখা বাড়লে বক্স নিজে বড় হয় */
+        .content-box { background: transparent; padding: 0; border-radius: 0; font-size: 13.5px; line-height: 1.7; color: #cbd5e1; border: none; }
+        
+        /* Gallery Feed */
+        .gallery-feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .gallery-feed img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #1e293b; cursor: pointer; transition: 0.2s; }
+        .gallery-feed img:hover { border-color: #38bdf8; }
+        .btn-full-gallery { background: #10b981; color: white; text-align: center; display: block; padding: 10px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+        
+        /* Modal & Viewer Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { background: #111c38; padding: 20px; border-radius: 14px; width: 90%; max-width: 400px; border: 1px solid #1e293b; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .form-control { width: 100%; padding: 10px; background: #0f172a; color: #fff; border: 1px solid #1e293b; border-radius: 8px; margin-bottom: 12px; box-sizing: border-box; font-size: 12px; outline: none; }
+        .btn-save { background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 8px; font-size: 12.5px; }
+        .btn-cancel { background: #ef4444; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 12.5px; }
+        
+        /* Full Screen Viewer */
+        .viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+        .viewer img { max-width: 90%; max-height: 80%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .viewer-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .viewer-btn { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .viewer-btn:hover { background: #38bdf8; color: #0b1329; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h2 class="page-heading">আমাদের সম্পর্কে ও তথ্যাবলী</h2>
+
+        <!-- স্লাইডার অ্যাড করার বাটন -->
+        <button id="btnAddSlider" class="btn-add">+ স্লাইডারের ছবি ও বিবরণ যোগ করুন</button>
+
+        <!-- স্লাইডার সেকশন -->
+        <div class="slider-wrapper" id="sliderContainer">
+            <p style="color: #94a3b8; text-align: center; width: 100%; font-size: 12px;">স্লাইডার লোড হচ্ছে...</p>
+        </div>
+
+        <!-- প্রতিষ্ঠান ও স্কাউট পরিচিতি -->
+        <div class="section-card" style="margin-top: 20px;">
+            <div class="section-title">
+                প্রতিষ্ঠান ও স্কাউট পরিচিতি
+                <button id="btnEditAbout" class="btn-action" style="display: none;">এডিট</button>
+            </div>
+            <div id="aboutContent" class="content-box">তথ্য লোড হচ্ছে...</div>
+        </div>
+
+        <!-- গ্যালারি সেকশন -->
+        <div class="section-card">
+            <div class="section-title">
+                স্কাউট গ্যালারি
+                <button id="btnEditGalleryFeed" class="btn-action" style="display: none;">ফিডের ছবি এডিট করুন</button>
+            </div>
+            <div id="galleryFeedContainer" class="gallery-feed">
+                <!-- ৩টি ছবি এখানে লোড হবে -->
+            </div>
+            <a href="gallery.html" class="btn-full-gallery">সম্পূর্ণ গ্যালারি দেখুন</a>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalSlider" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #facc15; font-size: 14px; margin-top: 0;">নতুন স্লাইডার যোগ করুন (সর্বোচ্চ ১০টি)</h3>
+            <input type="text" id="sliderUrl" class="form-control" placeholder="ছবির লিংক দিন (Image URL)">
+            <input type="text" id="sliderTitle" class="form-control" placeholder="স্লাইডারের টাইটেল">
+            <textarea id="sliderDesc" class="form-control" placeholder="স্লাইডারের বিস্তারিত বর্ণনা..." rows="3"></textarea>
+            <button id="saveSliderBtn" class="btn-save">সেভ করুন</button>
+            <button class="btn-cancel" onclick="closeModals()">বাতিল</button>
+        </div>
+    </div>
+
+    <div id="modalAbout" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #facc15; font-size: 14px; margin-top: 0;">পরিচিতি আপডেট করুন</h3>
+            <textarea id="aboutText" class="form-control" placeholder="বিস্তারিত লিখুন..." rows="8"></textarea>
+            <button id="saveAboutBtn" class="btn-save">আপডেট করুন</button>
+            <button class="btn-cancel" onclick="closeModals()">বাতিল</button>
+        </div>
+    </div>
+
+    <div id="modalGalleryFeed" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #facc15; font-size: 14px; margin-top: 0;">গ্যালারি ফিড এডিট করুন (সর্বোচ্চ ৩টি)</h3>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">নতুন ছবি দিলে আগের ফিড ছবিগুলো সম্পূর্ণ রিপ্লেস হয়ে যাবে।</p>
+            <input type="text" id="feedImg1" class="form-control" placeholder="১ম ছবির লিংক">
+            <input type="text" id="feedImg2" class="form-control" placeholder="২য় ছবির লিংক">
+            <input type="text" id="feedImg3" class="form-control" placeholder="৩য় ছবির লিংক">
+            <button id="saveFeedBtn" class="btn-save">রিপ্লেস করুন</button>
+            <button class="btn-cancel" onclick="closeModals()">বাতিল</button>
+        </div>
+    </div>
+
+    <!-- Full Screen Image Viewer for Feed -->
+    <div id="imageViewer" class="viewer">
+        <div class="viewer-controls">
+            <button class="viewer-btn" onclick="downloadImage()">ডাউনলোড</button>
+            <button class="viewer-btn" onclick="closeViewer()" style="background: #ef4444;">বন্ধ (X)</button>
+        </div>
+        <img id="viewerImg" src="" alt="Full View">
+    </div>
+
+    <!-- অটোমেটিক স্লাইডার স্ক্রিপ্ট -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            setInterval(() => {
+                const sliderContainer = document.getElementById("sliderContainer");
+                if (sliderContainer && !sliderContainer.matches(':hover')) {
+                    const scrollAmount = sliderContainer.clientWidth;
+                    if (sliderContainer.scrollLeft + sliderContainer.clientWidth >= sliderContainer.scrollWidth) {
+                        sliderContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        sliderContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    }
+                }
+            }, 3000);
+        });
+        window.closeModals = function() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    </script>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="about-us.js"></script>
+</body>
+</html>
