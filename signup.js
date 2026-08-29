@@ -281,16 +281,8 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
             extraData = { className, classRoll, secGroupType, secGroupVal };
         }
 
-        // লগইন করা ইউজার থাকলে এবং সে adult_leader হলে সরাসরি approved, অন্যথায় pending
-        const currentLoggedIn = localStorage.getItem("loggedInUser");
-        let initialStatus = "pending";
-        
-        if (currentLoggedIn && currentLoggedIn !== "undefined" && currentLoggedIn !== "null") {
-            // ডাটাবেজ থেকে চেক করতে পারি বা লোকালস্টোরেজে রোল সেভ থাকলে তা দেখতে পারি। 
-            // ধরে নিচ্ছি লগইন করা ইউজারের রোল লোকালস্টোরেজে "userRole" বা অন্য কোথাও সেভ আছে, 
-            // অথবা যদি কেউ লগইন অবস্থায় অ্যাড করেন তবে তাকে সরাসরি approved করে দেওয়া নিরাপদ:
-            initialStatus = "approved"; 
-        }
+        // সাইন-আপ পেজ থেকে যে কেউ অ্যাকাউন্ট খুললে স্ট্যাটাস বাধ্যতামূলকভাবে pending থাকবে
+        const initialStatus = "pending";
 
         const userData = {
             role: role.value,
@@ -318,13 +310,8 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
 
         await setDoc(doc(firedb, "users", usernameVal), userData);
 
-        if (currentLoggedIn && currentLoggedIn !== "undefined" && currentLoggedIn !== "null") {
-            alert("সফলভাবে সদস্য যুক্ত করা হয়েছে এবং অ্যাকাউন্ট সরাসরি অনুমোদিত (Approved) হয়েছে।");
-            window.location.href = "scout-list.html";
-        } else {
-            alert("সফলভাবে আবেদন করা হয়েছে! অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি লগইন করতে পারবেন।");
-            window.location.href = "login.html";
-        }
+        alert("সফলভাবে আবেদন করা হয়েছে! অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি লগইন করতে পারবেন।");
+        window.location.href = "login.html";
 
     } catch (error) {
         console.error("Signup Error: ", error);

@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
-                    // চাঁদা বকেয়া আছে কি না চেক (weeklySubs বা due ফিল্ড চেক করার লজিক)
+                    // চাঁদা বকেয়া আছে কি না চেক
                     let hasUnpaidDue = false;
                     if (userData.weeklySubs) {
                         for (let weekKey in userData.weeklySubs) {
@@ -194,11 +194,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         hasUnpaidDue = true;
                     }
 
-                    if (hasUnpaidDue && !isAdultLeader) {
+                    if (hasUnpaidDue && !isAdultLeader && status !== "pending") {
                         if (welcomeSection && !document.getElementById('dueNotice')) {
                             const dueP = document.createElement('p');
                             dueP.id = 'dueNotice';
-                            dueP.style.color = '#f59e0b'; // হলুদ/কমলা রঙের সর্তকতা
+                            dueP.style.color = '#f59e0b';
                             dueP.style.fontSize = '13px';
                             dueP.style.marginTop = '6px';
                             dueP.style.fontWeight = '600';
@@ -207,8 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
-                    // পেন্ডিং স্ট্যাটাস চেক
-                    if (status === "pending" && !isAdultLeader) {
+                    // পেন্ডিং স্ট্যাটাস চেক (স্ট্যাটাস pending হলে সে স্কাউট হোক বা অ্যাডাল্ট লিডার, কেউই লিডার বা অন্য অপশন পাবে না)
+                    if (status === "pending") {
                         if (welcomeSection && !document.getElementById('pendingNotice')) {
                             const noticeP = document.createElement('p');
                             noticeP.id = 'pendingNotice';
@@ -219,21 +219,19 @@ document.addEventListener("DOMContentLoaded", () => {
                             noticeP.innerText = '(আপনার আবেদন পেন্ডিং রয়েছে, এপ্রুভের জন্য অপেক্ষা করুন বা স্কাউট লিডারের সাথে যোগাযোগ করুন)';
                             welcomeSection.appendChild(noticeP);
                         }
-                    }
 
-                    if (status === "pending" && !isAdultLeader) {
+                        // পেন্ডিং অবস্থায় থাকা যেকোনো ইউজারের (স্কাউট বা লিডার) জন্য শুধুমাত্র প্রোফাইল এবং বেসিক পেজগুলো ওপেন থাকবে
                         if (menuProfile) menuProfile.style.display = 'block';
                         if (menuScoutList) menuScoutList.style.display = 'none';
                         if (menuRequests) menuRequests.style.display = 'none';
                         if (menuInactive) menuInactive.style.display = 'none';
-                        // পেন্ডিং ব্যবহারকারীদের জন্য উপস্থিতি ও সাপ্তাহিক চাঁদা মেনু হাইড থাকবে
                         if (menuAttendance) menuAttendance.style.display = 'none';
                         if (menuWeeklySubs) menuWeeklySubs.style.display = 'none';
                     } else {
+                        // স্ট্যাটাস approved বা active হলে রোল অনুযায়ী অপশন দেখাবে
                         if (menuProfile) menuProfile.style.display = 'block';
                         if (menuScoutList) menuScoutList.style.display = 'block';
                         
-                        // সাধারণ স্কাউট ও লিডার উভয়ের জন্যই উপস্থিতি ও সাপ্তাহিক চাঁদা মেনু দৃশ্যমান করা হলো
                         if (menuAttendance) menuAttendance.style.display = 'block';
                         if (menuWeeklySubs) menuWeeklySubs.style.display = 'block';
 
