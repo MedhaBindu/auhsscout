@@ -1,38 +1,13 @@
 import { firedb } from './firebase-config.js';
 import { collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { uploadImageToCloudinary } from './cloudinary-config.js';
 
-import { uploadImageToCloudinary } from './cloudinary-config.js'; // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা হলো
-
-// Cloudinary Upload Function (with Overwrite trick using Username)
-async function uploadProfileToCloudinary(file, username) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    // একই ইউজারনেম দিয়ে আপলোড করলে ক্লাউডিনারি অটোমেটিক পুরোনোটি মুছে নতুনটি রিপ্লেস করবে!
-    formData.append('public_id', `profile_image_${username}`); 
-
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (!response.ok) {
-        throw new Error("ছবি আপলোড ব্যর্থ হয়েছে!");
-    }
-
-    const data = await response.json();
-    return data.secure_url;
-}
-
-// ইনপুট ফিল্ড ও হেল্পার এলিমেন্ট সেটআপ এবং অটো-অ্যাট্রিবিউট হ্যান্ডলিং
 document.addEventListener("DOMContentLoaded", () => {
-    // ছবি ছাড়া অন্য ফাইল (যেমন ভিডিও) আপলোড বন্ধ করতে ইনপুট ফিল্ডে strict accept যুক্ত করা হলো
     const profileImageInput = document.getElementById('profileImage');
     if (profileImageInput) {
         profileImageInput.setAttribute('accept', 'image/*');
     }
 
-    // ১. ক্লাস রোল ফিল্ডে নিউমেরিক কিবোর্ড ও শুধুমাত্র সংখ্যা নিশ্চিত করা
     const classRollInput = document.getElementById('classRoll');
     if (classRollInput) {
         classRollInput.setAttribute('type', 'tel');
@@ -42,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ২. মোবাইল নাম্বার ফিল্ড হ্যান্ডলিং (১১ ডিজিট, 01 দিয়ে শুরু, নিউমেরিক কিবোর্ড)
     const mobileInput = document.getElementById('mobile');
     if (mobileInput) {
         mobileInput.setAttribute('type', 'tel');
@@ -84,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ৩. ইউজারনেম ফিল্ড হ্যান্ডলিং (শুধু ইংরেজি ছোট হাতের অক্ষর, স্পেস বা অন্য কিছু নিষেধ)
     const usernameInput = document.getElementById('username');
     if (usernameInput) {
         usernameInput.addEventListener('input', function() {
@@ -93,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ৪. পাসওয়ার্ড ফিল্ড হ্যান্ডলিং (সর্বনিম্ন ৬ ডিজিট)
     const passwordInput = document.getElementById('password');
     if (passwordInput) {
         let passError = document.getElementById('passwordError');
@@ -120,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ইউজারনেম লাইভ চেক লজিক
 let isUsernameAvailableSignup = true;
 const usernameInput = document.getElementById('username');
 const usernameErrorDiv = document.getElementById('usernameError');
@@ -128,6 +99,18 @@ const usernameErrorDiv = document.getElementById('usernameError');
 if (usernameInput) {
     usernameInput.addEventListener('input', async () => {
         const val = usernameInput.value.trim();
+        
+        // ন্যূনতম ৫ ডিজিট চেক করা
+        if (val.length > 0 && val.length < 5) {
+            usernameInput.classList.add('error-border');
+            if (usernameErrorDiv) {
+                usernameErrorDiv.style.display = 'block';
+                usernameErrorDiv.innerText = "ইউজারনেম কমপক্ষে ৫ ডিজিটের হতে হবে!";
+            }
+            isUsernameAvailableSignup = false;
+            return;
+        }
+
         if (!val) {
             usernameInput.classList.remove('error-border');
             if (usernameErrorDiv) usernameErrorDiv.style.display = 'none';
@@ -182,6 +165,7 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
     const mobile = document.getElementById('mobile');
     const dob = document.getElementById('dob');
     const birthCertNo = document.getElementById('birthCertNo');
+    const nidNo = document.getElementById('nidNo');
     const password = document.getElementById('password');
     const profileImageInput = document.getElementById('profileImage');
 
@@ -196,9 +180,18 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
     if (!motherNameBn.value.trim()) { motherNameBn.classList.add('error-border'); hasError = true; }
     if (!motherNameEn.value.trim()) { motherNameEn.classList.add('error-border'); hasError = true; }
     if (!address.value.trim()) { address.classList.add('error-border'); hasError = true; }
-    if (!username.value.trim()) { username.classList.add('error-border'); hasError = true; }
     
-    // মোবাইল নাম্বার ১১ ডিজিট ও সঠিক কিনা চেক
+    // ইউজারনেম ফিল্ড এবং ৫ ডিজিট ভ্যালিডেশন চেক
+    const usernameVal = username.value.trim();
+    if (!usernameVal || usernameVal.length < 5) {
+        username.classList.add('error-border');
+        if (usernameErrorDiv) {
+            usernameErrorDiv.style.display = 'block';
+            usernameErrorDiv.innerText = "ইউজারনেম কমপক্ষে ৫ ডিজিটের হতে হবে!";
+        }
+        hasError = true;
+    }
+    
     if (!mobile.value.trim() || mobile.value.trim().length !== 11) {
         mobile.classList.add('error-border');
         const mErr = document.getElementById('mobileError');
@@ -208,14 +201,17 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
 
     if (!dob.value) { dob.classList.add('error-border'); hasError = true; }
     
-    if (!birthCertNo.value.trim() || birthCertNo.value.trim().length !== 17) {
+    const bcnVal = birthCertNo.value.trim();
+    const nidVal = nidNo.value.trim();
+
+    if (!bcnVal && !nidVal) {
         birthCertNo.classList.add('error-border');
-        document.getElementById('bcnError').style.display = 'block';
-        document.getElementById('bcnError').innerText = "জন্ম নিবন্ধন নম্বর অবধারিতভাবে ১৭ ডিজিটের হতে হবে!";
+        nidNo.classList.add('error-border');
+        errorMsg.style.display = "block";
+        errorMsg.innerText = "জন্ম নিবন্ধন নম্বর অথবা এনআইডি নম্বরের মধ্যে অন্তত একটি পূরণ করতে হবে!";
         hasError = true;
     }
 
-    // পাসওয়ার্ড কমপক্ষে ৬ ডিজিট চেক
     if (!password.value.trim() || password.value.trim().length < 6) {
         password.classList.add('error-border');
         hasError = true;
@@ -249,8 +245,10 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
     }
 
     if (hasError) {
-        errorMsg.style.display = "block";
-        errorMsg.innerText = "দয়া করে সকল বাধ্যতামূলক ফিল্ড, সঠিক ১১ ডিজিটের মোবাইল, পাসওয়ার্ড ও অন্যান্য তথ্য সঠিকভাবে পূরণ করুন!";
+        if (!errorMsg.innerText) {
+            errorMsg.style.display = "block";
+            errorMsg.innerText = "দয়া করে সকল বাধ্যতামূলক ফিল্ড সঠিকভাবে পূরণ করুন!";
+        }
         return;
     }
 
@@ -267,19 +265,18 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
         if (!imageFile.type.startsWith('image/')) {
             signupBtn.innerText = originalBtnText;
             signupBtn.disabled = false;
-            return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন, কোনো ভিডিও বা অন্য ফাইল নয়!");
+            return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন!");
         }
 
-        let cloudinaryImageUrl = "";
-        try {
-            // Cloudinary-তে ছবি আপলোড এবং সিকিউর লিংক জেনারেট করা
-            cloudinaryImageUrl = await uploadProfileToCloudinary(imageFile, username.value.trim());
-        } catch(err) {
+        const uploadResult = await uploadImageToCloudinary(imageFile);
+        if (!uploadResult || !uploadResult.url) {
             signupBtn.innerText = originalBtnText;
             signupBtn.disabled = false;
-            errorMsg.innerText = "ছবি আপলোডে সমস্যা হয়েছে! আবার চেষ্টা করুন।";
+            errorMsg.innerText = "ছবি আপলোডে সমস্যা হয়েছে! আপনার ক্লাউডিনারি কনফিগ (Cloud Name ও Upload Preset) চেক করুন।";
             return;
         }
+
+        let cloudinaryImageUrl = uploadResult.url;
 
         let extraData = {};
         if (role.value === 'scout') {
@@ -302,22 +299,22 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
             motherNameBn: motherNameBn.value.trim(),
             motherNameEn: motherNameEn.value.trim(),
             address: address.value.trim(),
-            username: username.value.trim(),
+            username: usernameVal,
             mobile: mobile.value.trim(),
             email: document.getElementById('email').value.trim(), 
             dob: dob.value, 
-            birthCertNo: birthCertNo.value.trim(), 
+            birthCertNo: bcnVal, 
+            nidNo: nidVal,
             bloodGroup: document.getElementById('bloodGroup').value, 
-            profileImage: cloudinaryImageUrl, // Base64 এর বদলে Cloudinary-এর ডিরেক্ট লিংক সেভ হচ্ছে
+            profileImage: cloudinaryImageUrl, 
             password: password.value.trim(),
             status: initialStatus,
             createdAt: new Date().toISOString(),
             ...extraData
         };
 
-        await setDoc(doc(firedb, "users", username.value.trim()), userData);
+        await setDoc(doc(firedb, "users", usernameVal), userData);
 
-        // লগইন স্ট্যাটাস চেক করে সঠিক অ্যালার্ট মেসেজ ও রিডাইরেকশন হ্যান্ডলিং
         if (currentLoggedIn && currentLoggedIn !== "undefined" && currentLoggedIn !== "null") {
             alert("সফলভাবে সদস্য যুক্ত করা হয়েছে।");
             window.location.href = "scout-list.html";

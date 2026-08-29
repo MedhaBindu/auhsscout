@@ -109,7 +109,7 @@
         .edit-mode .static { display: none; }
         .edit-mode-file { display: flex !important; }
 
-        /* জন্ম নিবন্ধন নাম্বারের ভুল বার্তা ও লাল বর্ডার স্টাইল */
+        /* জন্ম নিবন্ধন ও এনআইডি নম্বরের ভুল বার্তা ও লাল বর্ডার স্টাইল */
         .error-border { border-color: #f43f5e !important; }
         .error-text { color: #f43f5e; font-size: 11px; margin-top: 4px; display: none; font-weight: bold; }
     </style>
@@ -153,17 +153,27 @@
                     </div>
                 </div>
             </div>
-            <!-- নতুন যুক্ত করা জেন্ডার অপশন (শুধু দেখা যাবে, এডিট করা যাবে না) -->
+            <!-- জেন্ডার অপশন -->
             <div class="full-box">
                 <div class="label">জেন্ডার (Gender)</div>
                 <div class="value" id="valGender"><span class="static"></span></div>
             </div>
+            <!-- জন্ম নিবন্ধন নম্বর -->
             <div class="full-box">
                 <div class="label">জন্ম নিবন্ধন নম্বর</div>
                 <div class="value" id="valBcn">
                     <span class="static"></span>
-                    <input type="text" id="editBcn" inputmode="numeric" placeholder="১৭ ডিজিটের জন্ম নিবন্ধন নম্বর দিন">
+                    <input type="text" id="editBcn" inputmode="numeric" maxlength="17" placeholder="১৭ ডিজিটের জন্ম নিবন্ধন নম্বর দিন">
                     <div class="error-text" id="bcnError">জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের হতে হবে!</div>
+                </div>
+            </div>
+            <!-- এনআইডি নম্বর (নতুন যুক্ত করা হয়েছে) -->
+            <div class="full-box">
+                <div class="label">এনআইডি (NID) নম্বর</div>
+                <div class="value" id="valNid">
+                    <span class="static"></span>
+                    <input type="text" id="editNid" inputmode="numeric" placeholder="এনআইডি নম্বর দিন (যদি থাকে)">
+                    <div class="error-text" id="nidError">এনআইডি নম্বর সংখ্যায় হতে হবে!</div>
                 </div>
             </div>
         </div>

@@ -122,7 +122,7 @@
             color: #f8fafc;
         }
 
-        .username-error, .bcn-error {
+        .username-error, .bcn-error, .nid-error {
             font-size: 12px;
             color: #f43f5e;
             margin-top: 4px;
@@ -324,10 +324,17 @@
                 <input type="date" id="dob">
             </div>
 
+            <!-- জন্ম নিবন্ধন নম্বর ও এনআইডি নম্বর অপশন (কমপক্ষে ১টি দিতে হবে) -->
             <div class="input-group">
-                <label>জন্ম নিবন্ধন নম্বর <span style="color: #f43f5e;">*</span></label>
+                <label>জন্ম নিবন্ধন নম্বর (অথবা এনআইডি)</label>
                 <input type="text" id="birthCertNo" inputmode="numeric" maxlength="17" placeholder="১৭ ডিজিটের জন্ম নিবন্ধন নম্বর...">
                 <span class="bcn-error" id="bcnError">জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের হতে হবে!</span>
+            </div>
+
+            <div class="input-group">
+                <label>এনআইডি (NID) নম্বর (অথবা জন্ম নিবন্ধন)</label>
+                <input type="text" id="nidNo" inputmode="numeric" placeholder="এনআইডি নম্বর (যদি থাকে)...">
+                <span class="nid-error" id="nidError">এনআইডি নম্বর সংখ্যায় হতে হবে!</span>
             </div>
 
             <div class="input-group">
@@ -382,7 +389,6 @@
             }
         });
 
-        // পাসওয়ার্ড শো / হাইড করার ফাংশন
         document.getElementById('togglePasswordBtn').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');
             if (passwordInput.type === 'password') {
@@ -443,27 +449,19 @@
             }
         });
 
-        // জন্ম নিবন্ধন নম্বর শুধু সংখ্যা এবং ১৭ ডিজিট কড়াকড়ি নিশ্চিত করার কোড
         const birthCertNoInput = document.getElementById('birthCertNo');
         const bcnError = document.getElementById('bcnError');
 
         birthCertNoInput.addEventListener('input', function() {
-            // শুধু ডিজিট বা সংখ্যা রাখার জন্য
             this.value = this.value.replace(/\D/g, '');
             if (this.value.length > 17) {
                 this.value = this.value.slice(0, 17);
             }
+        });
 
-            if (this.value.length > 0 && this.value.length !== 17) {
-                this.classList.add('error-border');
-                bcnError.style.display = 'block';
-                if (this.value.length < 17) {
-                    bcnError.innerText = "জন্ম নিবন্ধন নম্বর কম হয়েছে (১৭ ডিজিট হতে হবে)!";
-                }
-            } else {
-                this.classList.remove('error-border');
-                bcnError.style.display = 'none';
-            }
+        const nidNoInput = document.getElementById('nidNo');
+        nidNoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
         });
 
         document.querySelectorAll('.capitalize-input').forEach(input => {

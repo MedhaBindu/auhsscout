@@ -1,6 +1,6 @@
 import { firedb } from './firebase-config.js';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { uploadImageToCloudinary } from './cloudinary-config.js'; // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা হলো
+import { uploadImageToCloudinary } from './cloudinary-config.js';
 
 const loggedInUser = localStorage.getItem("loggedInUser"); 
 if (!loggedInUser) {
@@ -60,7 +60,8 @@ async function loadProfile() {
             else if (genderText.toLowerCase() === 'female') genderText = 'Female (মহিলা)';
             document.querySelector('#valGender .static').innerText = genderText;
 
-            document.querySelector('#valBcn .static').innerText = currentData.birthCertNo || "";
+            document.querySelector('#valBcn .static').innerText = currentData.birthCertNo || "সংরক্ষিত নেই";
+            document.querySelector('#valNid .static').innerText = currentData.nidNo || "সংরক্ষিত নেই";
             
             document.querySelector('#valFatherBn .static').innerText = currentData.fatherNameBn || "";
             document.querySelector('#valFatherEn .static').innerText = currentData.fatherNameEn || "";
@@ -92,13 +93,10 @@ async function loadProfile() {
     }
 }
 
-// প্রোফাইল এডিটে রোল ফিল্ড, মোবাইল নাম্বার, ইউজারনেম ও ইমেজ প্রিভিউ হ্যান্ডলিং
 document.addEventListener("DOMContentLoaded", () => {
     const editImageInput = document.getElementById('editImage');
     if (editImageInput) {
         editImageInput.setAttribute('accept', 'image/*');
-        
-        // ছবি সিলেক্ট করার সাথে সাথে গোল বৃত্তে লাইভ প্রিভিউ দেখানোর জন্য
         editImageInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -106,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 reader.onload = function(e) {
                     const userImgEl = document.getElementById('userImg');
                     if (userImgEl) {
-                        userImgEl.src = e.target.result; // প্রিভিউ সেট হবে
+                        userImgEl.src = e.target.result;
                     }
                 }
                 reader.readAsDataURL(file);
@@ -163,31 +161,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    const editUsernameInput = document.getElementById('editUsername');
-    if (editUsernameInput) {
-        editUsernameInput.addEventListener('input', function() {
-            let val = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
-            this.value = val;
-        });
-    }
 });
 
+// জন্ম নিবন্ধন নম্বর ভ্যালিডেশন
 const editBcnInput = document.getElementById('editBcn');
 const bcnError = document.getElementById('bcnError');
 
 if (editBcnInput) {
     editBcnInput.addEventListener('input', function() {
         this.value = this.value.replace(/\D/g, '');
+        if (this.value.length > 17) {
+            this.value = this.value.slice(0, 17);
+        }
         
         if (this.value.length > 0 && this.value.length !== 17) {
             this.classList.add('error-border');
             bcnError.style.display = 'block';
-            if (this.value.length < 17) {
-                bcnError.innerText = "জন্ম নিবন্ধন নম্বর কম হয়েছে (১৭ ডিজিট হতে হবে)!";
-            } else {
-                bcnError.innerText = "জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের বেশি হতে পারবে না!";
-            }
+            bcnError.innerText = "জন্ম নিবন্ধন নম্বর ১৭ ডিজিটের হতে হবে!";
         } else {
             this.classList.remove('error-border');
             bcnError.style.display = 'none';
@@ -195,40 +185,13 @@ if (editBcnInput) {
     });
 }
 
-let isUsernameAvailableProfile = true;
-const editUsernameInput = document.getElementById('editUsername');
-const editUsernameError = document.getElementById('editUsernameError');
+// এনআইডি নম্বর ভ্যালিডেশন (শুধু সংখ্যা লেখার জন্য)
+const editNidInput = document.getElementById('editNid');
+const nidError = document.getElementById('nidError');
 
-if (editUsernameInput) {
-    editUsernameInput.addEventListener('input', async function() {
-        const val = this.value.trim();
-        if (!val || val === currentData.username) {
-            this.classList.remove('error-border');
-            if (editUsernameError) editUsernameError.style.display = 'none';
-            isUsernameAvailableProfile = true;
-            return;
-        }
-
-        try {
-            const usersRef = collection(firedb, "users");
-            const q = query(usersRef, where("username", "==", val));
-            const snap = await getDocs(q);
-
-            if (!snap.empty) {
-                this.classList.add('error-border');
-                if (editUsernameError) {
-                    editUsernameError.style.display = 'block';
-                    editUsernameError.innerText = "এই ইউজারনেমটি ইতিমধ্যে ব্যবহৃত হয়েছে!";
-                }
-                isUsernameAvailableProfile = false;
-            } else {
-                this.classList.remove('error-border');
-                if (editUsernameError) editUsernameError.style.display = 'none';
-                isUsernameAvailableProfile = true;
-            }
-        } catch (err) {
-            console.error("Profile username check error:", err);
-        }
+if (editNidInput) {
+    editNidInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
     });
 }
 
@@ -244,6 +207,7 @@ if (editBtn) {
         document.getElementById('editDob').value = currentData.dob || "";
         document.getElementById('editBlood').value = currentData.bloodGroup || "";
         document.getElementById('editBcn').value = currentData.birthCertNo || "";
+        document.getElementById('editNid').value = currentData.nidNo || "";
         document.getElementById('editFatherBn').value = currentData.fatherNameBn || "";
         document.getElementById('editFatherEn').value = currentData.fatherNameEn || "";
         document.getElementById('editMotherBn').value = currentData.motherNameBn || "";
@@ -251,9 +215,6 @@ if (editBtn) {
         document.getElementById('editAddr').value = currentData.address || "";
         document.getElementById('editMobile').value = currentData.mobile || "";
         document.getElementById('editEmail').value = currentData.email || "";
-        if (document.getElementById('editUsername')) {
-            document.getElementById('editUsername').value = currentData.username || "";
-        }
 
         if (currentData.role === 'scout') {
             document.getElementById('editClass').value = currentData.className || "";
@@ -269,23 +230,22 @@ if (saveBtn) {
         if (!canEdit) return;
         try {
             const bcnVal = document.getElementById('editBcn').value.trim();
+            const nidVal = document.getElementById('editNid').value.trim();
             const mobVal = document.getElementById('editMobile').value.trim();
             
+            // জন্ম নিবন্ধন অথবা এনআইডি দুটির মধ্যে কমপক্ষে ১টি থাকা বাধ্যতামূলক নিয়ম চেক করা
+            if (!bcnVal && !nidVal) {
+                alert("জন্ম নিবন্ধন নম্বর অথবা এনআইডি নম্বরের মধ্যে অন্তত একটি পূরণ করা বাধ্যতামূলক!");
+                return;
+            }
+
             if (bcnVal && bcnVal.length !== 17) {
-                editBcnInput.classList.add('error-border');
-                bcnError.style.display = 'block';
-                bcnError.innerText = "সঠিক ১৭ ডিজিটের জন্ম নিবন্ধন নম্বর প্রদান করুন!";
-                alert("জন্ম নিবন্ধন নম্বর ভুল রয়েছে! ১৭ ডিজিট নিশ্চিত করুন।");
+                alert("জন্ম নিবন্ধন নম্বর অবধারিতভাবে ১৭ ডিজিটের হতে হবে!");
                 return;
             }
 
             if (mobVal && mobVal.length !== 11) {
                 alert("মোবাইল নাম্বার অবধারিতভাবে ১১ ডিজিটের হতে হবে!");
-                return;
-            }
-
-            if (!isUsernameAvailableProfile) {
-                alert("ইউজারনেমটি সঠিক নয় বা ইতিমধ্যে ব্যবহৃত হচ্ছে!");
                 return;
             }
 
@@ -301,11 +261,10 @@ if (saveBtn) {
                 if (!imageFile.type.startsWith('image/')) {
                     saveBtn.innerText = originalBtnText;
                     saveBtn.disabled = false;
-                    return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন, কোনো ভিডিও বা অন্য ফাইল নয়!");
+                    return alert("দয়া করে শুধুমাত্র ছবি সিলেক্ট করুন!");
                 }
                 
                 try {
-                    // ক্লাউডিনারি কনফিগ ফাইল থেকে ইম্পোর্ট করা ফাংশন কল করা হলো
                     const uploadResult = await uploadImageToCloudinary(imageFile);
                     if (uploadResult && uploadResult.url) {
                         updatedImage = uploadResult.url;
@@ -323,7 +282,8 @@ if (saveBtn) {
             const updatePayload = {
                 dob: document.getElementById('editDob').value.trim() || currentData.dob,
                 bloodGroup: document.getElementById('editBlood').value || currentData.bloodGroup,
-                birthCertNo: bcnVal || currentData.birthCertNo,
+                birthCertNo: bcnVal,
+                nidNo: nidVal,
                 fatherNameBn: document.getElementById('editFatherBn').value.trim() || currentData.fatherNameBn,
                 fatherNameEn: document.getElementById('editFatherEn').value.trim() || currentData.fatherNameEn,
                 motherNameBn: document.getElementById('editMotherBn').value.trim() || currentData.motherNameBn,
@@ -333,13 +293,6 @@ if (saveBtn) {
                 email: document.getElementById('editEmail').value.trim() || currentData.email,
                 profileImage: updatedImage
             };
-
-            if (document.getElementById('editUsername')) {
-                const newUname = document.getElementById('editUsername').value.trim();
-                if (newUname) {
-                    updatePayload.username = newUname;
-                }
-            }
 
             if (currentData.role === 'scout') {
                 updatePayload.className = document.getElementById('editClass').value.trim() || currentData.className;
@@ -353,7 +306,7 @@ if (saveBtn) {
         } catch (error) {
             console.error("আপডেট করতে ত্রুটি হয়েছে: ", error);
             alert("আপডেট করা সম্ভব হয়নি!");
-            saveBtn.innerText = "Save / সংরক্ষণ করুন";
+            saveBtn.innerText = "সেভ করুন";
             saveBtn.disabled = false;
         }
     };
