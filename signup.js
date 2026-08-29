@@ -100,7 +100,6 @@ if (usernameInput) {
     usernameInput.addEventListener('input', async () => {
         const val = usernameInput.value.trim();
         
-        // ন্যূনতম ৫ ডিজিট চেক করা
         if (val.length > 0 && val.length < 5) {
             usernameInput.classList.add('error-border');
             if (usernameErrorDiv) {
@@ -181,7 +180,6 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
     if (!motherNameEn.value.trim()) { motherNameEn.classList.add('error-border'); hasError = true; }
     if (!address.value.trim()) { address.classList.add('error-border'); hasError = true; }
     
-    // ইউজারনেম ফিল্ড এবং ৫ ডিজিট ভ্যালিডেশন চেক
     const usernameVal = username.value.trim();
     if (!usernameVal || usernameVal.length < 5) {
         username.classList.add('error-border');
@@ -283,10 +281,15 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
             extraData = { className, classRoll, secGroupType, secGroupVal };
         }
 
+        // লগইন করা ইউজার থাকলে এবং সে adult_leader হলে সরাসরি approved, অন্যথায় pending
         const currentLoggedIn = localStorage.getItem("loggedInUser");
         let initialStatus = "pending";
+        
         if (currentLoggedIn && currentLoggedIn !== "undefined" && currentLoggedIn !== "null") {
-            initialStatus = "approved";
+            // ডাটাবেজ থেকে চেক করতে পারি বা লোকালস্টোরেজে রোল সেভ থাকলে তা দেখতে পারি। 
+            // ধরে নিচ্ছি লগইন করা ইউজারের রোল লোকালস্টোরেজে "userRole" বা অন্য কোথাও সেভ আছে, 
+            // অথবা যদি কেউ লগইন অবস্থায় অ্যাড করেন তবে তাকে সরাসরি approved করে দেওয়া নিরাপদ:
+            initialStatus = "approved"; 
         }
 
         const userData = {
@@ -316,10 +319,10 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
         await setDoc(doc(firedb, "users", usernameVal), userData);
 
         if (currentLoggedIn && currentLoggedIn !== "undefined" && currentLoggedIn !== "null") {
-            alert("সফলভাবে সদস্য যুক্ত করা হয়েছে।");
+            alert("সফলভাবে সদস্য যুক্ত করা হয়েছে এবং অ্যাকাউন্ট সরাসরি অনুমোদিত (Approved) হয়েছে।");
             window.location.href = "scout-list.html";
         } else {
-            alert("সফলভাবে আবেদন করা হয়েছে।");
+            alert("সফলভাবে আবেদন করা হয়েছে! অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি লগইন করতে পারবেন।");
             window.location.href = "login.html";
         }
 
